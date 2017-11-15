@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack:///./ts/src/index.ts"],"names":[],"mappings":";;;;AAAA,IAAM,QAAQ,GAAW,KAAK","file":"index.js","sourcesContent":["const testName: string = 'aaa'\n\n\n// WEBPACK FOOTER //\n// ./ts/src/index.ts"],"sourceRoot":""}
