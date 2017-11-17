@@ -1,7 +1,8 @@
+import initialState from './initialState'
 
-import { ITAction } from '../interface'
+import { ITAction, ITInitialState } from '../interface'
 
-export default (state: any = {}, action: ITAction) => {
+export default (state: ITInitialState = initialState, action: ITAction) => {
   switch (action.value) {
     default:
       return state

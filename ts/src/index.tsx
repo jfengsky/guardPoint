@@ -3,7 +3,7 @@ import { render } from 'react-dom'
 import { BrowserRouter } from 'react-router-dom'
 import { createStore, combineReducers } from 'redux'
 import { Provider } from 'react-redux'
-
+import 'antd/dist/antd.css'
 import reducers from './reducer'
 import App from './App'
 
@@ -15,4 +15,5 @@ render(
       <App />
     </BrowserRouter>
   </Provider>,
-  document.getElementById('root'))
+  document.getElementById('root')
+)

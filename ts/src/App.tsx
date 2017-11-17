@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { connect } from 'react-redux'
+import MenuComponent from './components/MenuComponent'
 
 interface ITProps { }
 interface ITState { }
@@ -7,8 +8,9 @@ interface ITState { }
 class App extends React.Component<ITProps, ITState> {
   public render(): JSX.Element {
     return (
-      <div>
-        App
+      <div className="layout-demo-basic">
+        <MenuComponent />
+        
       </div>
     )
   }
