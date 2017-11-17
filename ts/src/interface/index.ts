@@ -3,7 +3,7 @@ export interface ITAction {
   value?: any
 }
 
-interface ITRoute {
+export interface ITRoute {
 
   // 路径
   path: string
@@ -13,6 +13,10 @@ interface ITRoute {
 
   // 标题名
   name: string
+
+  icon?: string
+
+  route?: Array<ITRoute>
 }
 
 export interface ITInitialState {

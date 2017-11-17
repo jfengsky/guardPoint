@@ -1,22 +1,56 @@
 import * as React from 'react'
 import { connect } from 'react-redux'
+import { Link } from 'react-router-dom'
 import { Menu, Icon } from 'antd'
 // import Menu from './components/Menu'
+import { ITRoute, ITInitialState } from '../interface'
 
 const SubMenu = Menu.SubMenu
 const MenuItemGroup = Menu.ItemGroup
+
 interface ITProps {
-  route: any
+  route: Array<ITRoute>
 }
 interface ITState {
   current: string
 }
 
+const MenuItemList = (data: ITRoute): JSX.Element => {
+  let {
+    name,
+    path,
+    route,
+    icon
+  } = data
+  if (data.route) {
+    return (
+      <SubMenu key={icon} title={<span><Icon type={icon} />{name}</span>}>
+        {
+          route.map((item: ITRoute): JSX.Element => (
+          <Menu.Item key={item.icon}>
+            <Link to={item.path}>
+              <Icon type={item.icon} />{item.name}
+            </Link>
+          </Menu.Item>
+        )) 
+        }
+      </SubMenu>
+    )
+  }
+  return (
+    <Menu.Item key={icon}>
+      <Link to={path}>
+        <Icon type={icon} />{name}
+      </Link>
+    </Menu.Item>
+  )
+}
+
 class MenuComponent extends React.Component<ITProps, ITState> {
-  constructor(props: ITProps){
+  constructor(props: ITProps) {
     super(props)
     this.state = {
-      current: 'mail'
+      current: 'edit'
     }
   }
   public render(): JSX.Element {
@@ -26,15 +60,9 @@ class MenuComponent extends React.Component<ITProps, ITState> {
         selectedKeys={[this.state.current]}
         mode="horizontal"
       >
-        <Menu.Item key="mail">
-          <Icon type="mail" />Navigation One
-        </Menu.Item>
-        <SubMenu title={<span><Icon type="setting" />Navigation Three - Submenu</span>}>
-          <MenuItemGroup title="Item 1">
-            <Menu.Item key="setting:1">Option 1</Menu.Item>
-            <Menu.Item key="setting:2">Option 2</Menu.Item>
-          </MenuItemGroup>
-        </SubMenu>
+        {
+          this.props.route.map(MenuItemList)
+        }
       </Menu>
     )
   }
@@ -47,7 +75,7 @@ class MenuComponent extends React.Component<ITProps, ITState> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: ITInitialState) => ({
   route: state.route
 })
 
