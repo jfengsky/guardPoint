@@ -4,7 +4,7 @@ export interface ITLayout {
   __INITSTATE__: any
 }
 
-export const layout = (props:ITLayout): string => `
+export const layout = (props: ITLayout): string => `
   <html>
     <head>
       <meta name="viewport" content="width=1000, initial-scale=1.0, maximum-scale=1.0">
