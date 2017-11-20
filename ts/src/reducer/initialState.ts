@@ -31,6 +31,11 @@ export default {
         name: '编辑',
         icon: 'setting',
         route:[{
+            path: '/modify/todo',
+            component: 'ModifyTodo',
+            name: '任务编辑',
+            icon: 'clock-circle-o'
+        },{
             path: '/modify/page',
             component: 'ModifyPage',
             name: '页面编辑',

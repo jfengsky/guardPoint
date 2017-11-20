@@ -50,9 +50,31 @@ class MenuComponent extends React.Component<ITProps, ITState> {
   constructor(props: ITProps) {
     super(props)
     this.state = {
-      current: 'edit'
+      current: 'appstore'
     }
   }
+
+  componentDidMount(){
+    let { current } = this.state
+    this.props.route.some( (item: ITRoute) => {
+      if(location.pathname === item.path){
+        current = item.icon
+        return true
+      }
+      if(item.route){
+        item.route.map( (secItem: ITRoute) => {
+          if(secItem.path === location.pathname ){
+            current = secItem.icon
+            return true
+          }
+        })
+      }
+    })
+    this.setState({
+      current
+    })
+  }
+
   public render(): JSX.Element {
     return (
       <Menu
