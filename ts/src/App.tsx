@@ -17,7 +17,7 @@ import * as Cmp from './components'
 interface ITProps { }
 interface ITState { }
 
-const Cmps: any = {...Cmp}
+const Cmps: any = { ...Cmp }
 
 class App extends React.Component<ITProps, ITState> {
   public render(): JSX.Element {
@@ -25,9 +25,9 @@ class App extends React.Component<ITProps, ITState> {
       <div className="layout-demo-basic">
         <MenuComponent />
         {
-          initialState.route.map( ({path, component, route}: ITRoute, index: number) => {
-            if(route) {
-              return route.map( (item: ITRoute, routeIndex: number) => <Route key={routeIndex} exact={item.path === '/'} path={item.path} component={Cmps[item.component]} />)
+          initialState.route.map(({ path, component, route, }: ITRoute, index: number) => {
+            if (route) {
+              return route.map((item: ITRoute, routeIndex: number) => <Route key={routeIndex} exact={item.path === '/'} path={item.path} component={Cmps[item.component]} />)
             }
             return <Route key={index} exact={path === '/'} path={path} component={Cmps[component]} />
           })
