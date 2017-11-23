@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { Form, Input, Icon, Checkbox, Button, DatePicker } from 'antd'
 import { FormComponentProps } from 'antd/lib/form/Form'
 
-import { ITInitialState, ITTodo } from '../interface'
+import { ITInitialState, ITTodo, ITTodoTagOption } from '../interface'
 import { add_todo } from '../action'
 
 import { FETCH_TODO } from '../store/request'
@@ -22,11 +22,6 @@ interface ITfromList {
   Cmp: any
 }
 
-const options = [
-  { label: 'CR', value: 1 },
-  { label: '事件', value: 2 },
-  { label: '紧急', value: 3 },
-]
 function onChange(checkedValues: any) {
   console.log('checked = ', checkedValues);
 }
@@ -62,10 +57,11 @@ const formList: Array<ITfromList> = [{
   // }
 ]
 
-interface ITState {}
+interface ITState { }
 
 interface UserFormProps extends FormComponentProps {
   addTodo: (value: ITTodo) => {}
+  todoTags: Array<ITTodoTagOption>
 }
 
 class TodoEdit extends React.Component<UserFormProps, ITState> {
@@ -94,6 +90,7 @@ class TodoEdit extends React.Component<UserFormProps, ITState> {
       labelCol: { span: 4 },
       wrapperCol: { span: 8, offset: 4 },
     }
+
     return (
       <Form layout='horizontal' style={{ paddingTop: 10 }}>
         {
@@ -122,7 +119,7 @@ class TodoEdit extends React.Component<UserFormProps, ITState> {
           {getFieldDecorator('todoTag', {
             rules: [{ required: false }],
           })(
-            <CheckboxGroup options={options} onChange={onChange} />
+            <CheckboxGroup options={this.props.todoTags} onChange={onChange} />
             )}
         </FormItem>
 
@@ -150,18 +147,19 @@ class TodoEdit extends React.Component<UserFormProps, ITState> {
             todoTitle: title,
             todoDesc: desc,
             todoDate,
-            todoTag:tag
+            todoTag: tag
           } = values
-          let date = todoDate.map( (item: any) => {
+          let date = todoDate.map((item: any) => {
             let dateArray = item.toArray()
-            return `${dateArray[0]}-${dateArray[1]+1}-${dateArray[2]}`
+            return `${dateArray[0]}-${dateArray[1] + 1}-${dateArray[2]}`
           })
           FETCH_TODO({
             type: 'add',
             title,
             desc,
             date,
-            tag
+            tag,
+            done: false
           })
           // this.props.addTodo({
           //   ...this.state
@@ -177,6 +175,7 @@ const WrappedTodoEdit = Form.create()(TodoEdit)
 
 interface ITTodoProps {
   todoList: Array<ITTodo>
+  todoTags: Array<ITTodoTagOption>
   addTodo: (value: ITTodo) => {}
 }
 
@@ -189,7 +188,8 @@ class TodoEditCmp extends React.Component<ITTodoProps, ITTodoState>{
 }
 
 const mapStateToProps = (state: ITInitialState) => ({
-  todoList: state.todoList
+  todoList: state.todoList,
+  todoTags: state.todoTags
 })
 
 const mapDispatchToProps = (dispatch: any) => ({

@@ -6,9 +6,11 @@
 
 import * as React from 'react'
 import { connect } from 'react-redux'
-import { Table, Radio } from 'antd'
+import { Table, Radio, Tag } from 'antd'
 
-import { ITInitialState, ITTodo } from '../interface'
+import { ITInitialState, ITTodo, ITTodoTagOption } from '../interface'
+
+import { modify_todo } from '../action'
 
 const RadioButton = Radio.Button
 const RadioGroup = Radio.Group
@@ -18,6 +20,10 @@ interface ITProps {
   todoFilter: string
 
   todoList: Array<ITTodo>
+
+  todoTags: Array<ITTodoTagOption>
+
+  modifyTodo: (value: any) => {}
 }
 interface ITState { }
 
@@ -25,26 +31,14 @@ const upTodoInfo = (id: string) => {
 
 }
 
-const columns = [{
-  title: '任务',
-  dataIndex: 'title',
-  render: (text: string, record: any) => {
-    let href = `/time?id=${record._id}`
-    return <a href={href}>{text}</a>
-  },
-}, {
-  title: '标签',
-  dataIndex: 'tag',
-}]
-
-const rowSelection = {
-  onChange: (selectedRowKeys: any, selectedRows: any) => {
-    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-  },
-  getCheckboxProps: (record: any) => ({
-    disabled: record.name === 'Disabled User',
-  }),
-}
+// const rowSelection = {
+//   onChange: (selectedRowKeys: any, selectedRows: any) => {
+//     console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+//   },
+//   getCheckboxProps: (record: any) => ({
+//     disabled: record.done
+//   }),
+// }
 
 class Home extends React.Component<ITProps, ITState> {
   public render(): JSX.Element {
@@ -59,14 +53,48 @@ class Home extends React.Component<ITProps, ITState> {
 
         <Table
           rowKey="_id"
-          rowSelection={rowSelection}
-          columns={columns}
+          // rowSelection={this.rowSelection}
+          columns={this.columns()}
           dataSource={this.props.todoList}
           expandedRowRender={(record: any) => <div><p>{record.desc}</p><p>{record.date}</p></div>}
         />
-
       </div>
     )
+  }
+
+  // rowSelection = {
+  //   onChange: (selectedRowKeys: any, selectedRows: any) => {
+  //     console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+  //   },
+  //   getCheckboxProps: (record: any) => ({
+  //     disabled: false
+  //   })
+  // }
+
+  columns = () => {
+
+    return [{
+      title: '任务',
+      dataIndex: 'title',
+      render: (text: string, record: any) => {
+        let href = `/time?id=${record._id}`
+        return <a href={href}>{text}</a>
+      },
+    }, {
+      title: '标签',
+      dataIndex: 'tag',
+      render: (tag: Array<number>) => {
+        let tagName: Array<any> = []
+        this.props.todoTags.map(({ label, value, color }: ITTodoTagOption) => {
+          tag && tag.length && tag.map((tagItem: number) => {
+            if (tagItem === value) {
+              tagName.push(<Tag key={value} color={color}>{label}</Tag>)
+            }
+          })
+        })
+        return tagName
+      }
+    }]
   }
 
   onChange = () => {
@@ -76,7 +104,14 @@ class Home extends React.Component<ITProps, ITState> {
 
 const mapStateToProps = (state: ITInitialState) => ({
   todoList: state.todoList,
-  todoFilter: state.todoFilter
+  todoFilter: state.todoFilter,
+  todoTags: state.todoTags
 })
 
-export default connect(mapStateToProps)(Home)
+const mapDispatchToProps = (dispatch: any) => ({
+
+  modifyTodo: (value: any) =>{dispatch(modify_todo(value))}
+  // addTodo: (value: ITTodo): void => { dispatch(add_todo(value)) }
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home)

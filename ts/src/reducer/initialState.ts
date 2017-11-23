@@ -1,4 +1,19 @@
 export default {
+    todoTags: [{
+        label: 'CR',
+        value: 1,
+        color: '#87d068'
+    },
+    {
+        label: '事件',
+        value: 2,
+        color: '#108ee9'
+    },
+    {
+        label: '紧急',
+        value: 3,
+        color: '#f50'
+    }],
     todoFilter: 'active',
     todoList: [],
     route: [{
@@ -7,13 +22,13 @@ export default {
         name: '待办',
         icon: 'appstore',
         show: true
-    },{
+    }, {
         path: '/page',
         component: 'Page',
         name: '页面',
         show: true,
         icon: 'chrome'
-    },{
+    }, {
         path: '/time',
         component: 'Time',
         name: '计时',
@@ -25,13 +40,13 @@ export default {
         name: '接口字段',
         icon: 'api',
         show: true,
-        route:[{
+        route: [{
             path: '/api/createApi',
             component: 'CreateApi',
             name: '创建接口字段',
             show: true,
             icon: 'file-add'
-        },{
+        }, {
             path: '/api/editApi',
             component: 'EditApi',
             name: '修改接口字段',
@@ -44,19 +59,19 @@ export default {
         name: '编辑',
         icon: 'setting',
         show: true,
-        route:[{
+        route: [{
             path: '/modify/todo',
             component: 'ModifyTodo',
             name: '任务编辑',
             show: true,
             icon: 'clock-circle-o'
-        },{
+        }, {
             path: '/modify/page',
             component: 'ModifyPage',
             name: '页面编辑',
             show: true,
             icon: 'edit'
-        },{
+        }, {
             path: '/modify/api',
             component: 'ModifyApi',
             name: '接口编辑',

@@ -39,6 +39,9 @@ export interface ITTodo {
 
   // 任务标签
   tag: Array<number>
+
+  // 是否完成
+  done: boolean
 }
 
 export interface ITTodoApi {
@@ -48,13 +51,29 @@ export interface ITTodoApi {
   desc?: string
   date?: Array<string>
   tag?: Array<number>
+  done?: boolean
 }
 
 // export interface ITTodoApi extends ITTodo {
 //   type: 'add' | 'search' | 'modify' | 'delete'
 // }
 
+export interface ITTodoTagOption {
+
+  // 标签名
+  label: string
+
+  // 标签值
+  value: number
+
+  // 颜色
+  color: string
+}
+
 export interface ITInitialState {
+
+  // 任务标签
+  todoTags: Array<ITTodoTagOption>
 
   // todo默认过滤 all active completed
   todoFilter: string

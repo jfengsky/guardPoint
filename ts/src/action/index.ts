@@ -11,3 +11,9 @@ export const updata_todo = (value: Array<ITTodo>) => ({
   type: UPDATA_TODO,
   value
 })
+
+export const MODIFY_TODO: string = 'MODIFY_TODO'
+export const modify_todo = (value: any) => ({
+  type: MODIFY_TODO,
+  value
+})

@@ -9,11 +9,12 @@ export default (req: any) => {
     title,
     desc,
     date,
-    tag
+    tag,
+    done
   } = param
   switch(type) {
     case 'add':
-      return todoDB.save({_id, title, desc, date, tag})
+      return todoDB.save({_id, title, desc, date, tag, done})
     case 'search':
     return todoDB.search({_id})
     // case 'delete':

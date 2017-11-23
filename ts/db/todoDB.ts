@@ -10,12 +10,13 @@ export default {
       title,
       desc,
       date,
-      tag
+      tag,
+      done
     } = data
     return new Promise((resolve, reject) => {
       MongoClient.connect(URL, (err: any, db: any) => {
         const collection = db.collection(colName)
-        collection.insert({ title, desc, date, tag, time: new Date().getTime() }, (inerr: any, docs: any) => {
+        collection.insert({ title, desc, date, tag, done, time: new Date().getTime() }, (inerr: any, docs: any) => {
           let {
             title,
             _id

@@ -259,10 +259,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var todoDB_1 = __webpack_require__(8);
 exports.default = function (req) {
     var param = req.body;
-    var type = param.type, _id = param._id, title = param.title, desc = param.desc, date = param.date, tag = param.tag;
+    var type = param.type, _id = param._id, title = param.title, desc = param.desc, date = param.date, tag = param.tag, done = param.done;
     switch (type) {
         case 'add':
-            return todoDB_1.default.save({ _id: _id, title: title, desc: desc, date: date, tag: tag });
+            return todoDB_1.default.save({ _id: _id, title: title, desc: desc, date: date, tag: tag, done: done });
         case 'search':
             return todoDB_1.default.search({ _id: _id });
     }
@@ -280,11 +280,11 @@ var dbConfig_1 = __webpack_require__(9);
 var colName = 'todoList';
 exports.default = {
     save: function (data) {
-        var title = data.title, desc = data.desc, date = data.date, tag = data.tag;
+        var title = data.title, desc = data.desc, date = data.date, tag = data.tag, done = data.done;
         return new Promise(function (resolve, reject) {
             dbConfig_1.MongoClient.connect(dbConfig_1.URL, function (err, db) {
                 var collection = db.collection(colName);
-                collection.insert({ title: title, desc: desc, date: date, tag: tag, time: new Date().getTime() }, function (inerr, docs) {
+                collection.insert({ title: title, desc: desc, date: date, tag: tag, done: done, time: new Date().getTime() }, function (inerr, docs) {
                     var _a = docs.ops[0], title = _a.title, _id = _a._id;
                     resolve({ data: { _id: _id } });
                     db.close();
@@ -327,7 +327,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var mongodb = __webpack_require__(10);
 exports.MongoClient = mongodb.MongoClient;
 exports.ObjectID = mongodb.ObjectID;
-exports.URL = 'mongodb://localhost:27017/uncharted';
+exports.URL = 'mongodb://localhost:27017/guardPoint';
 
 
 /***/ }),
