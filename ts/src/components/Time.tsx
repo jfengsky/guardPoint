@@ -1,8 +1,8 @@
 import * as React from 'react'
 import { connect } from 'react-redux'
 import { GetQueryString } from '../util'
-import { Progress, Slider, Row, Col, Tag, Button, Collapse } from 'antd'
-
+import { Progress, Slider, Row, Col, Tag, Button, Collapse, Calendar  } from 'antd'
+import * as moment from 'moment'
 
 import { ITInitialState, ITTodo, ITTodoApi, ITTodoTagOption } from '../interface'
 
@@ -116,6 +116,7 @@ class Time extends React.Component<ITProps, ITState> {
                   <p>{todoItem.desc}</p>
                 </Panel>
                 <Panel header="时间" key="3">
+                  <Calendar fullscreen={false} value={moment(todoItem.date[1])} onSelect={this.dateSelect} />
                   <p>{todoItem.date.join('~')}</p>
                 </Panel>
                 <Panel header="标签" key="4">
@@ -131,7 +132,7 @@ class Time extends React.Component<ITProps, ITState> {
                 </Panel>
                 <Panel header="编辑" key="5">
                   <div>
-                    <a href={`/modify/todo?id=${todoItem._id}`} onClick={this.changTodo} >修改</a>
+                    <a href={`/modify/todo?id=${todoItem._id}`}>修改</a>
                   </div>
                 </Panel>
               </Collapse>
@@ -207,6 +208,11 @@ class Time extends React.Component<ITProps, ITState> {
       inputValue: value,
       countTime: value + ':00'
     });
+  }
+
+  dateSelect = (value: any) => {
+
+    // console.log(value)
   }
 
   changTodo = async (e: any) => {

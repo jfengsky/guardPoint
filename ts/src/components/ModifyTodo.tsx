@@ -1,11 +1,12 @@
 import * as React from 'react'
 import { connect } from 'react-redux'
-import { Form, Input, Icon, Checkbox, Button, DatePicker } from 'antd'
+import { Form, Input, Icon, Checkbox, Button, DatePicker, Switch } from 'antd'
 import { FormComponentProps } from 'antd/lib/form/Form'
+import * as moment from 'moment'
 
-import { ITInitialState, ITTodo, ITTodoTagOption } from '../interface'
+import { ITInitialState, ITTodo, ITTodoApi, ITTodoTagOption } from '../interface'
 import { add_todo } from '../action'
-
+import { GetQueryString } from '../util'
 import { FETCH_TODO } from '../store/request'
 
 const FormItem = Form.Item
@@ -18,51 +19,37 @@ interface ITfromList {
   label: string
   required: boolean
   message: string
-  placeholder: string
-  Cmp: any
+  // placeholder: string
+  type: string
+  option: any
 }
 
-function onChange(checkedValues: any) {
-  console.log('checked = ', checkedValues);
-}
-const formList: Array<ITfromList> = [{
-  name: 'todoTitle',
-  label: '任务',
-  required: true,
-  message: '请输入任务标题',
-  placeholder: '任务标题',
-  Cmp: Input
-}, {
-  name: 'todoDesc',
-  label: '描述',
-  required: false,
-  message: '',
-  placeholder: '',
-  Cmp: TextArea
-}
-  // , {
-  //   name: 'todoDate',
-  //   label: '任务时间',
-  //   required: false,
-  //   message: '',
-  //   placeholder: '',
-  //   Cmp: RangePicker
-  // }, {
-  //   name: 'todoTag',
-  //   label: '任务标签',
-  //   required: false,
-  //   message: '',
-  //   placeholder: '',
-  //   Cmp: CheckboxGroup
-  // }
-]
 
-interface ITState { }
+interface ITState {
+  _id: string
+  todoItem: ITTodo
+  formList: Array<ITfromList>
+}
 
 interface UserFormProps extends FormComponentProps {
   addTodo: (value: ITTodo) => {}
   todoTags: Array<ITTodoTagOption>
 }
+
+const formItemLayout = {
+  labelCol: { span: 4 },
+  wrapperCol: { span: 14 },
+}
+
+const formTailLayout = {
+  labelCol: { span: 4 },
+  wrapperCol: { span: 8, offset: 4 },
+}
+
+
+let hasChange: boolean = false
+
+let submitDate: Array<string> = []
 
 class TodoEdit extends React.Component<UserFormProps, ITState> {
 
@@ -70,10 +57,135 @@ class TodoEdit extends React.Component<UserFormProps, ITState> {
     super(props)
 
     this.state = {
-      title: '',
-      desc: '',
-      date: [],
-      tag: []
+      _id: null,
+      todoItem: null,
+      formList: null
+    }
+  }
+
+  componentWillMount() {
+
+    let { todoTags } = this.props
+
+    this.setState({
+      formList: [{
+        name: 'todoTitle',
+        label: '任务',
+        required: true,
+        message: '请输入任务标题',
+        type: 'Input',
+        option: {
+          placeholder: '任务标题',
+        }
+      }, {
+        name: 'todoDesc',
+        label: '描述',
+        required: false,
+        message: '',
+        type: 'TextArea',
+        option: {
+          placeholder: '',
+        }
+      }
+      // , {
+      //   name: 'todoDate',
+      //   label: '任务时间',
+      //   required: false,
+      //   message: '',
+      //   type: 'RangePicker',
+      //   option: {
+      //     onChange: this.dateChange
+      //     // placeholder: '',
+      //   }
+      // }
+      , {
+        name: 'todoTag',
+        label: '任务类型',
+        required: false,
+        message: '',
+        type: 'CheckboxGroup',
+        option: {
+          options: todoTags,
+          onChange: this.tagChange
+          // placeholder: '',
+        }
+      }
+        // , {
+        //   name: 'todoDone',
+        //   label: '是否完成',
+        //   required: false,
+        //   message: '',
+        //   type: 'Switch',
+        //   option: {
+        //     checkedChildren: "是",
+        //     unCheckedChildren: "否",
+        //     defaultChecked: false,
+        //     onChange: this.doneChange
+        //   }
+        // }
+      ]
+    })
+  }
+
+  componentDidMount() {
+    let _id = GetQueryString('id')
+    this.setState({
+      _id
+    })
+  }
+
+  componentWillReceiveProps(nextProps: any) {
+    let {
+      todoList
+    } = nextProps
+    let {
+      formList
+    } = this.state
+    if (todoList.length) {
+      let todoItem: ITTodo
+      todoList.some((item: ITTodo) => {
+        if (item._id === this.state._id) {
+          todoItem = item
+          return true
+        }
+      })
+      submitDate = todoItem.date
+      this.setState({
+        todoItem
+      })
+    }
+  }
+
+  componentDidUpdate() {
+    let {
+      todoItem
+    } = this.state
+    if (todoItem && !hasChange) {
+      for (let key in todoItem) {
+        switch (key) {
+          case 'title':
+            this.props.form.setFieldsValue({
+              todoTitle: todoItem[key]
+            })
+            break
+          case 'desc':
+            this.props.form.setFieldsValue({
+              todoDesc: todoItem[key]
+            })
+            break
+          case 'tag':
+            this.props.form.setFieldsValue({
+              todoTag: todoItem[key]
+            })
+            break;
+          // case 'done':
+          //   this.props.form.setFieldsValue({
+          //     todoDone: { checked: todoItem[key] }
+          //   })
+          //   break
+        }
+      }
+      hasChange = true
     }
   }
 
@@ -81,47 +193,77 @@ class TodoEdit extends React.Component<UserFormProps, ITState> {
 
     const { getFieldDecorator } = this.props.form
 
-    const formItemLayout = {
-      labelCol: { span: 4 },
-      wrapperCol: { span: 14 },
-    }
+    let { formList, todoItem } = this.state
 
-    const formTailLayout = {
-      labelCol: { span: 4 },
-      wrapperCol: { span: 8, offset: 4 },
+    const formatDate = 'YYYY-MM-DD'
+
+    let dateValue: any = []
+    if(todoItem){
+      // [moment('2015-01-01', formatDate), moment('2015-01-01', formatDate)]
+      dateValue[0] = moment(todoItem.date[0], formatDate)
+      dateValue[1] = moment(todoItem.date[1], formatDate)
     }
 
     return (
       <Form layout='horizontal' style={{ paddingTop: 10 }}>
         {
-          formList.map(({ name, label, required, message, placeholder, Cmp }: ITfromList, index: number): JSX.Element => {
+          formList.map(({ name, label, required, message, option, type }: ITfromList, index: number): JSX.Element => {
+            let FormCmp: any
+            switch (type) {
+              case 'TextArea':
+                FormCmp = TextArea
+                break
+              case 'RangePicker':
+                FormCmp = RangePicker
+                break
+              case 'CheckboxGroup':
+                FormCmp = CheckboxGroup
+                break
+              // case 'Switch':
+              //   FormCmp = Switch
+              //   break
+              default:
+                FormCmp = Input
+                break
+            }
+
             return (
               <FormItem key={index} label={label} {...formItemLayout} >
                 {getFieldDecorator(name, {
                   rules: [{ required, message }],
                 })(
-                  <Cmp placeholder={placeholder} />
+                  <FormCmp {...option} />
                   )}
               </FormItem>
             )
           })
         }
 
-        <FormItem label={'任务时间'} {...formItemLayout} >
-          {getFieldDecorator('todoDate', {
-            rules: [{ required: false }],
-          })(
-            <RangePicker onChange={this.dateChange} />
-            )}
-        </FormItem>
+        <div className="ant-row ant-form-item">
+          <div className="ant-col-4 ant-form-item-label">
+            <label>任务时间</label>
+          </div>
+          <div className="ant-col-14 ant-form-item-control-wrapper">
+            <div className="ant-form-item-control ">
+              <RangePicker
+                value={dateValue}
+                onChange={this.dateChange}
+                format={formatDate}
+              />
+            </div>
+          </div>
+        </div>
 
-        <FormItem label={'任务类型'} {...formItemLayout} >
-          {getFieldDecorator('todoTag', {
-            rules: [{ required: false }],
-          })(
-            <CheckboxGroup options={this.props.todoTags} onChange={onChange} />
-            )}
-        </FormItem>
+        <div className="ant-row ant-form-item">
+          <div className="ant-col-4 ant-form-item-label">
+            <label>是否完成</label>
+          </div>
+          <div className="ant-col-14 ant-form-item-control-wrapper">
+            <div className="ant-form-item-control ">
+              <Switch checkedChildren="是" unCheckedChildren="否" onChange={this.doneChange} checked={todoItem ? todoItem.done : false} />
+            </div>
+          </div>
+        </div>
 
         <FormItem {...formTailLayout}>
           <Button
@@ -135,35 +277,59 @@ class TodoEdit extends React.Component<UserFormProps, ITState> {
   }
 
   dateChange = (date: any, dateString: any) => {
-    console.log(dateString)
+    submitDate = dateString
+  }
+
+  tagChange = (value: Array<number>) => {
+    console.log(value)
+  }
+
+  doneChange = (value: boolean) => {
+    let {
+      todoItem
+    } = this.state
+    this.setState({
+      todoItem: Object.assign({}, todoItem, {
+        done: value
+      })
+    })
   }
 
   check = () => {
+    let {
+      todoItem,
+      _id
+    } = this.state
     this.props.form.validateFields(
-      (err) => {
+      async (err) => {
         if (!err) {
           let values: any = this.props.form.getFieldsValue()
           let {
             todoTitle: title,
             todoDesc: desc,
-            todoDate,
-            todoTag: tag
+            todoTag: tag,
+            // todoDone: done
           } = values
-          let date = todoDate.map((item: any) => {
-            let dateArray = item.toArray()
-            return `${dateArray[0]}-${dateArray[1] + 1}-${dateArray[2]}`
-          })
-          FETCH_TODO({
+
+          let param:ITTodoApi  = {
             type: 'add',
             title,
             desc,
-            date,
+            date: submitDate,
             tag,
-            done: false
-          })
-          // this.props.addTodo({
-          //   ...this.state
-          // })
+            done: todoItem.done
+          }
+
+          if(_id){
+            param.type = 'modify'
+            param._id = _id
+          }
+
+          let result = await FETCH_TODO(param)
+          if(!result.state){
+            location.reload()
+          }
+
         }
       }
     )
