@@ -16,7 +16,9 @@ export default (req: any) => {
     case 'add':
       return todoDB.save({_id, title, desc, date, tag, done})
     case 'search':
-    return todoDB.search({_id})
+      return todoDB.search({_id})
+    case 'modify':
+      return todoDB.updata({_id, title, desc, date, tag, done})
     // case 'delete':
     // case 'modify'
   }

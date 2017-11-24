@@ -265,6 +265,8 @@ exports.default = function (req) {
             return todoDB_1.default.save({ _id: _id, title: title, desc: desc, date: date, tag: tag, done: done });
         case 'search':
             return todoDB_1.default.search({ _id: _id });
+        case 'modify':
+            return todoDB_1.default.updata({ _id: _id, title: title, desc: desc, date: date, tag: tag, done: done });
     }
 };
 
@@ -287,6 +289,21 @@ exports.default = {
                 collection.insert({ title: title, desc: desc, date: date, tag: tag, done: done, time: new Date().getTime() }, function (inerr, docs) {
                     var _a = docs.ops[0], title = _a.title, _id = _a._id;
                     resolve({ data: { _id: _id } });
+                    db.close();
+                });
+            });
+        });
+    },
+    updata: function (data) {
+        var title = data.title, desc = data.desc, date = data.date, tag = data.tag, done = data.done, _id = data._id;
+        return new Promise(function (resolve, reject) {
+            dbConfig_1.MongoClient.connect(dbConfig_1.URL, function (err, db) {
+                var collection = db.collection(colName);
+                var where = {
+                    _id: new dbConfig_1.ObjectID(_id)
+                };
+                collection.update(where, { $set: { title: title, desc: desc, date: date, tag: tag, done: done } }, function (inerr, docs) {
+                    resolve({});
                     db.close();
                 });
             });

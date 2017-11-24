@@ -28,6 +28,29 @@ export default {
     })
   },
 
+  updata<T>(data:ITTodo) {
+    let {
+      title,
+      desc,
+      date,
+      tag,
+      done,
+      _id
+    } = data
+    return new Promise((resolve, reject) => {
+      MongoClient.connect(URL, (err: any, db: any) => {
+        const collection = db.collection(colName)
+        let where = {
+          _id: new ObjectID(_id)
+        }
+        collection.update(where,{$set:{title, desc, date, tag, done}}, (inerr:any , docs: any) => {
+          resolve({})
+          db.close()
+        })
+      })
+    })
+  },
+
   search<T>(data: any) {
     let {
       _id

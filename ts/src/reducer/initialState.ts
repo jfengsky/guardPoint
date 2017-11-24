@@ -13,6 +13,16 @@ export default {
         label: '紧急',
         value: 3,
         color: '#f50'
+    },
+    {
+        label: '项目',
+        value: 4,
+        color: '#87d068'
+    },
+    {
+        label: 'bug',
+        value: 5,
+        color: 'red'
     }],
     todoFilter: 'active',
     todoList: [],

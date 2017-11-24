@@ -25,7 +25,11 @@ interface ITProps {
 
   modifyTodo: (value: any) => {}
 }
-interface ITState { }
+interface ITState {
+
+  // 过滤方式
+  filter: string
+}
 
 const upTodoInfo = (id: string) => {
 
@@ -41,11 +45,23 @@ const upTodoInfo = (id: string) => {
 // }
 
 class Home extends React.Component<ITProps, ITState> {
+  constructor(props: ITProps) {
+    super(props)
+    this.state = {
+      filter: 'active'
+    }
+  }
   public render(): JSX.Element {
+
+    let {
+      todoList
+    } = this.props
+
+    let showList = this.filterList(todoList, this.state.filter)
+
     return (
       <div style={{ padding: 10 }}>
-
-        <RadioGroup onChange={this.onChange} defaultValue="active">
+        <RadioGroup onChange={this.onChange} defaultValue={this.state.filter}>
           <RadioButton value="all">全部</RadioButton>
           <RadioButton value="active">未完成</RadioButton>
           <RadioButton value="completed">结束</RadioButton>
@@ -55,7 +71,7 @@ class Home extends React.Component<ITProps, ITState> {
           rowKey="_id"
           // rowSelection={this.rowSelection}
           columns={this.columns()}
-          dataSource={this.props.todoList}
+          dataSource={showList}
           expandedRowRender={(record: any) => <div><p>{record.desc}</p><p>{record.date}</p></div>}
         />
       </div>
@@ -97,8 +113,31 @@ class Home extends React.Component<ITProps, ITState> {
     }]
   }
 
-  onChange = () => {
+  filterList = (data:Array<ITTodo>, filter: string): Array<ITTodo> => {
+    if(filter === 'all'){
+      return data
+    }
+    let tempList: Array<ITTodo> = []
+    if(data.length){
+      let filterDone = false
+      if(filter === 'completed' ){
+        filterDone = true
+      }
+      data.map( (item:ITTodo) => {
+        if(item.done === filterDone){
+          tempList.push(item)
+        }
+      })
+    }
+    return tempList
+  }
 
+  onChange = (e: any) => {
+    let { filter } = this.state
+    filter = e.target.value
+    this.setState({
+      filter
+    })
   }
 }
 
@@ -109,9 +148,7 @@ const mapStateToProps = (state: ITInitialState) => ({
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
-
   modifyTodo: (value: any) =>{dispatch(modify_todo(value))}
-  // addTodo: (value: ITTodo): void => { dispatch(add_todo(value)) }
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home)
