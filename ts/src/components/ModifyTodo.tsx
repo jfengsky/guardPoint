@@ -141,7 +141,7 @@ class TodoEdit extends React.Component<UserFormProps, ITState> {
     let {
       formList
     } = this.state
-    if (todoList.length) {
+    if (todoList.length && this.state._id) {
       let todoItem: ITTodo
       todoList.some((item: ITTodo) => {
         if (item._id === this.state._id) {
@@ -317,7 +317,7 @@ class TodoEdit extends React.Component<UserFormProps, ITState> {
             desc,
             date: submitDate,
             tag,
-            done: todoItem.done
+            done: todoItem ? todoItem.done : false
           }
 
           if(_id){

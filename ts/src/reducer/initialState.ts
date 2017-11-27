@@ -33,6 +33,12 @@ export default {
         icon: 'appstore',
         show: true
     }, {
+        path: '/calendarTask',
+        component: 'CalendarTask',
+        name: '日历',
+        icon: 'calendar',
+        show: true
+    }, {
         path: '/page',
         component: 'Page',
         name: '页面',
@@ -88,5 +94,11 @@ export default {
             show: true,
             icon: 'file-unknown'
         }]
+    }, {
+        path: '/chart',
+        component: 'Chart',
+        name: '统计',
+        icon: 'area-chart',
+        show: true
     }]
 }
