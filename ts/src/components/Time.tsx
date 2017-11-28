@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { connect } from 'react-redux'
 import { GetQueryString } from '../util'
-import { Progress, Slider, Row, Col, Tag, Button, Collapse, Calendar  } from 'antd'
+import { Progress, Slider, Row, Col, Tag, Button, Collapse, Calendar, Alert } from 'antd'
 import * as moment from 'moment'
 
 import { ITInitialState, ITTodo, ITTodoApi, ITTodoTagOption } from '../interface'
@@ -29,6 +29,8 @@ interface ITState {
 }
 
 let timeInterval: any = null
+
+let isStoping: boolean = false
 
 class Time extends React.Component<ITProps, ITState> {
   constructor(props: ITProps) {
@@ -69,7 +71,7 @@ class Time extends React.Component<ITProps, ITState> {
     }
   }
 
-  componentWillUnmount(){
+  componentWillUnmount() {
     clearInterval(timeInterval)
   }
 
@@ -90,16 +92,24 @@ class Time extends React.Component<ITProps, ITState> {
       isDone = todoItem.done
     }
 
-    if(isDone){
+    if (isDone) {
       disSlide = true
     }
 
-    if(percent === 0){
+    if (percent === 0) {
       percent = 100
     }
 
     return (
       <div style={{ padding: 10 }}>
+        {
+          isDone && <Alert
+            message="任务已完成！"
+            description="该任务用时xx分xx秒"
+            type="success"
+            showIcon
+          />
+        }
         <Row>
           <Col span={16}>
             <Slider min={1} max={45} marks={this.getMarks(5, 45)} onChange={this.onChange} value={inputValue} disabled={disSlide} />
@@ -147,10 +157,10 @@ class Time extends React.Component<ITProps, ITState> {
               percent={percent}
               status="active"
               format={percent => {
-                if(isDone){
+                if (isDone) {
                   return 'Done'
                 }
-                if(countDowning){
+                if (countDowning) {
                   return countTime
                 }
                 return `${inputValue}:00`
@@ -160,6 +170,7 @@ class Time extends React.Component<ITProps, ITState> {
               <Button type="primary" onClick={this.changTodo} icon={isDone ? 'check' : 'clock-circle-o'}>{isDone ? '完成' : '未完成'}</Button>
             </div>
           </Col>
+
         </Row>
       </div>
     )
@@ -173,24 +184,43 @@ class Time extends React.Component<ITProps, ITState> {
       disSlide
     } = this.state
 
-    if(!todoItem.done && inputValue){
+    if(timeInterval && !isStoping){
+      clearInterval(timeInterval)
+      isStoping = true
+      return
+    }
+
+    if (!todoItem.done && inputValue) {
       let totalSecond = inputValue * 60
-      // let totalMinSecond = totalSecond * 1000
+
+      if(isStoping){
+        timeInterval = setInterval(() => {
+          totalSecond--
+          let tempDate = new Date(totalSecond * 1000)
+          let percent = Math.ceil(100 - (totalSecond / (inputValue * 60)) * 100)
+          this.setState({
+            percent,
+            countTime: tempDate.getMinutes() + ':' + tempDate.getSeconds()
+          })
+        }, 1000)
+        isStoping = false
+      }
+
       this.setState({
         disSlide: !disSlide,
         countDowning: true
       }, () => {
-        
+        timeInterval = setInterval(() => {
+          totalSecond--
+          let tempDate = new Date(totalSecond * 1000)
+          let percent = Math.ceil(100 - (totalSecond / (inputValue * 60)) * 100)
+          this.setState({
+            percent,
+            countTime: tempDate.getMinutes() + ':' + tempDate.getSeconds()
+          })
+        }, 1000)
       })
-      timeInterval = setInterval(() => {
-        totalSecond--
-        let tempDate = new Date(totalSecond*1000)
-        let percent = Math.ceil(100 - (totalSecond/ (inputValue * 60)) * 100)
-        this.setState({
-          percent,
-          countTime: tempDate.getMinutes()+ ':' + tempDate.getSeconds()
-        })
-      }, 1000)
+
     }
   }
 
@@ -216,12 +246,12 @@ class Time extends React.Component<ITProps, ITState> {
   }
 
   changTodo = async (e: any) => {
-    let tempTodoItem: any  = Object.assign({}, this.state.todoItem, {
+    let tempTodoItem: any = Object.assign({}, this.state.todoItem, {
       done: !this.state.todoItem.done,
       type: 'modify'
     })
     let data = await FETCH_TODO(tempTodoItem)
-    if( !data.state ){
+    if (!data.state) {
       this.props.modifyTodo(Object.assign({}, this.state.todoItem, {
         done: !this.state.todoItem.done
       }))

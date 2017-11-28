@@ -70,7 +70,20 @@ export interface ITTodoTagOption {
   color: string
 }
 
+export interface ITApiListInfo {
+  _id?: string
+
+  // 接口名 路径
+  name: string
+
+  // 接口描述
+  desc: string
+}
+
 export interface ITInitialState {
+
+  // 接口列表
+  apiList: Array<ITApiListInfo>
 
   // 任务标签
   todoTags: Array<ITTodoTagOption>

@@ -63,6 +63,7 @@ class Home extends React.Component<ITProps, ITState> {
       <div style={{ padding: 10 }}>
         <RadioGroup onChange={this.onChange} defaultValue={this.state.filter}>
           <RadioButton value="all">全部</RadioButton>
+          <RadioButton value="today">今日任务</RadioButton>
           <RadioButton value="active">未完成</RadioButton>
           <RadioButton value="completed">结束</RadioButton>
         </RadioGroup>

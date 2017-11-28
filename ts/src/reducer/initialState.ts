@@ -24,6 +24,7 @@ export default {
         value: 5,
         color: 'red'
     }],
+    apiList: [],
     todoFilter: 'active',
     todoList: [],
     route: [{
@@ -53,12 +54,30 @@ export default {
     }, {
         path: '/api',
         component: 'Api',
-        name: '接口字段',
+        name: '接口',
         icon: 'api',
         show: true,
         route: [{
+            path: '/api/apilist',
+            component: 'ApiList',
+            name: '代理接口列表',
+            show: true,
+            icon: 'bars'
+        },{
             path: '/api/createApi',
             component: 'CreateApi',
+            name: '创建代理接口',
+            show: true,
+            icon: 'exception'
+        },{
+            path: '/api/moidfyapi',
+            component: 'ModifyApi',
+            name: '修改代理接口',
+            show: true,
+            icon: 'file-text'
+        },{
+            path: '/api/createApiinfo',
+            component: 'CreateApiInfo',
             name: '创建接口字段',
             show: true,
             icon: 'file-add'
@@ -67,7 +86,7 @@ export default {
             component: 'EditApi',
             name: '修改接口字段',
             show: true,
-            icon: 'file-text'
+            icon: 'file-excel'
         }]
     }, {
         path: '/modify',

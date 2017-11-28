@@ -86,19 +86,7 @@ class TodoEdit extends React.Component<UserFormProps, ITState> {
         option: {
           placeholder: '',
         }
-      }
-      // , {
-      //   name: 'todoDate',
-      //   label: '任务时间',
-      //   required: false,
-      //   message: '',
-      //   type: 'RangePicker',
-      //   option: {
-      //     onChange: this.dateChange
-      //     // placeholder: '',
-      //   }
-      // }
-      , {
+      }, {
         name: 'todoTag',
         label: '任务类型',
         required: false,
@@ -107,23 +95,8 @@ class TodoEdit extends React.Component<UserFormProps, ITState> {
         option: {
           options: todoTags,
           onChange: this.tagChange
-          // placeholder: '',
         }
-      }
-        // , {
-        //   name: 'todoDone',
-        //   label: '是否完成',
-        //   required: false,
-        //   message: '',
-        //   type: 'Switch',
-        //   option: {
-        //     checkedChildren: "是",
-        //     unCheckedChildren: "否",
-        //     defaultChecked: false,
-        //     onChange: this.doneChange
-        //   }
-        // }
-      ]
+      }]
     })
   }
 
@@ -198,8 +171,7 @@ class TodoEdit extends React.Component<UserFormProps, ITState> {
     const formatDate = 'YYYY-MM-DD'
 
     let dateValue: any = []
-    if(todoItem){
-      // [moment('2015-01-01', formatDate), moment('2015-01-01', formatDate)]
+    if (todoItem) {
       dateValue[0] = moment(todoItem.date[0], formatDate)
       dateValue[1] = moment(todoItem.date[1], formatDate)
     }
@@ -219,9 +191,6 @@ class TodoEdit extends React.Component<UserFormProps, ITState> {
               case 'CheckboxGroup':
                 FormCmp = CheckboxGroup
                 break
-              // case 'Switch':
-              //   FormCmp = Switch
-              //   break
               default:
                 FormCmp = Input
                 break
@@ -311,7 +280,7 @@ class TodoEdit extends React.Component<UserFormProps, ITState> {
             // todoDone: done
           } = values
 
-          let param:ITTodoApi  = {
+          let param: ITTodoApi = {
             type: 'add',
             title,
             desc,
@@ -320,13 +289,13 @@ class TodoEdit extends React.Component<UserFormProps, ITState> {
             done: todoItem ? todoItem.done : false
           }
 
-          if(_id){
+          if (_id) {
             param.type = 'modify'
             param._id = _id
           }
 
           let result = await FETCH_TODO(param)
-          if(!result.state){
+          if (!result.state) {
             location.reload()
           }
 
