@@ -16,7 +16,11 @@
   },
   "lint-staged": {
     "linters": {
-      "ts/**/*.js": [
+      "ts/**/*.tsx": [
+        "prettier-standard",
+        "git add"
+      ],
+      "ts/**/*.ts": [
         "prettier-standard",
         "git add"
       ]
