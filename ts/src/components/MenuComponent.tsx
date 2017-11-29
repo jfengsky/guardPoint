@@ -3,10 +3,10 @@ import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { Menu, Icon } from 'antd'
 // import Menu from './components/Menu'
-import { ITRoute, ITInitialState, ITTodo } from '../interface'
+import { ITRoute, ITInitialState, ITTodo, ITApiListInfo } from '../interface'
 
-import { FETCH_TODO } from '../store/request'
-import { UPDATA_TODO, updata_todo } from '../action'
+import { FETCH_TODO, FETCH_API } from '../store/request'
+import { UPDATA_TODO, updata_todo, updata_apilist } from '../action'
 
 const SubMenu = Menu.SubMenu
 const MenuItemGroup = Menu.ItemGroup
@@ -14,6 +14,7 @@ const MenuItemGroup = Menu.ItemGroup
 interface ITProps {
   route: Array<ITRoute>
   upDataTodo: (data: Array<ITTodo>) => {}
+  upApiList: (data: Array<ITApiListInfo>) => {}
 }
 interface ITState {
   current: string
@@ -86,6 +87,10 @@ class MenuComponent extends React.Component<ITProps, ITState> {
     if (!todoData.state) {
       this.props.upDataTodo(todoData.data)
     }
+    let apiData = await FETCH_API({type: 'search'})
+    if(!apiData.state){
+      this.props.upApiList(apiData.data)
+    }
   }
 
   public render(): JSX.Element {
@@ -117,6 +122,9 @@ const mapStateToProps = (state: ITInitialState) => ({
 const mapDispatchToProps = (dispatch: any) => ({
   upDataTodo: (value: Array<ITTodo>): void => {
     dispatch(updata_todo(value))
+  },
+  upApiList: (value: Array<ITApiListInfo>): void => {
+    dispatch(updata_apilist(value))
   }
 })
 

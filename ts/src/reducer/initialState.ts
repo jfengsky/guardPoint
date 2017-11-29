@@ -69,13 +69,22 @@ export default {
             name: '创建代理接口',
             show: true,
             icon: 'exception'
-        },{
-            path: '/api/moidfyapi',
-            component: 'ModifyApi',
-            name: '修改代理接口',
+        },
+        {
+            path: '/api/apiData',
+            component: 'ApiData',
+            name: '创建代理接口数据',
             show: true,
             icon: 'file-text'
-        },{
+        },
+        {
+            path: '/api/apiDataList',
+            component: 'ApiDataList',
+            name: '接口数据字段列表',
+            show: false,
+            icon: 'switcher'
+        },
+        {
             path: '/api/createApiinfo',
             component: 'CreateApiInfo',
             name: '创建接口字段',

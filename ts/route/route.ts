@@ -1,5 +1,7 @@
-import { todo } from '../src/store/apis'
+import { todo, apis, apiDatas } from '../src/store/apis'
 import todoRoute from './todoRoute'
+import apiRoute from './apiRoute'
+import apiDataRoute from './apiDataRoute'
 
 let successDate: any = {
   state: 0,
@@ -7,9 +9,16 @@ let successDate: any = {
 }
 
 export default async (req: any, res: any) => {
+  let sendData = {}
   switch (req.path) {
     case todo:
-      let sendData = await todoRoute(req)
+      sendData = await todoRoute(req)
+      return res.send(Object.assign({}, successDate, sendData))
+    case apis:
+      sendData = await apiRoute(req)
+      return res.send(Object.assign({}, successDate, sendData))
+    case apiDatas:
+      sendData = await apiDataRoute(req)
       return res.send(Object.assign({}, successDate, sendData))
   }
 }

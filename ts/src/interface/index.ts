@@ -54,6 +54,22 @@ export interface ITTodoApi {
   done?: boolean
 }
 
+export interface ITApiFetch {
+  type: 'add' | 'search' | 'modify' | 'delete'
+  _id?: string
+  name?: string
+  desc?: string
+}
+
+export interface ITApiDataFetch {
+  type: 'add' | 'search' | 'modify' | 'delete'
+  name?: string
+  apiId?: string
+  _id?: string
+  code?: string
+  desc?: string
+}
+
 // export interface ITTodoApi extends ITTodo {
 //   type: 'add' | 'search' | 'modify' | 'delete'
 // }
@@ -96,4 +112,5 @@ export interface ITInitialState {
 
   // todo列表
   todoList: Array<ITTodo>
+  
 }
