@@ -22,8 +22,8 @@ const deleteApi = (e: any) => {
     okType: 'danger',
     cancelText: '取消',
     async onOk() {
-      let result = await FETCH_API({ type: 'delete',_id: id })
-      if(!result.state){
+      let result = await FETCH_API({ type: 'delete', _id: id })
+      if (!result.state) {
         location.reload()
       }
     },

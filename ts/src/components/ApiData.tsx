@@ -86,7 +86,7 @@ class ApiData extends React.Component<UserFormProps, ITState> {
           code: apiCode
         }
         let result = await FETCH_APIDATA(param)
-        if(!result.state){
+        if (!result.state) {
           location.reload()
         }
       }

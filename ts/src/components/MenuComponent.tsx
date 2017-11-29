@@ -2,7 +2,6 @@ import * as React from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { Menu, Icon } from 'antd'
-// import Menu from './components/Menu'
 import { ITRoute, ITInitialState, ITTodo, ITApiListInfo } from '../interface'
 
 import { FETCH_TODO, FETCH_API } from '../store/request'
@@ -87,8 +86,8 @@ class MenuComponent extends React.Component<ITProps, ITState> {
     if (!todoData.state) {
       this.props.upDataTodo(todoData.data)
     }
-    let apiData = await FETCH_API({type: 'search'})
-    if(!apiData.state){
+    let apiData = await FETCH_API({ type: 'search' })
+    if (!apiData.state) {
       this.props.upApiList(apiData.data)
     }
   }

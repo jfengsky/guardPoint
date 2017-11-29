@@ -35,15 +35,6 @@ const upTodoInfo = (id: string) => {
 
 }
 
-// const rowSelection = {
-//   onChange: (selectedRowKeys: any, selectedRows: any) => {
-//     console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-//   },
-//   getCheckboxProps: (record: any) => ({
-//     disabled: record.done
-//   }),
-// }
-
 class Home extends React.Component<ITProps, ITState> {
   constructor(props: ITProps) {
     super(props)
@@ -114,18 +105,18 @@ class Home extends React.Component<ITProps, ITState> {
     }]
   }
 
-  filterList = (data:Array<ITTodo>, filter: string): Array<ITTodo> => {
-    if(filter === 'all'){
+  filterList = (data: Array<ITTodo>, filter: string): Array<ITTodo> => {
+    if (filter === 'all') {
       return data
     }
     let tempList: Array<ITTodo> = []
-    if(data.length){
+    if (data.length) {
       let filterDone = false
-      if(filter === 'completed' ){
+      if (filter === 'completed') {
         filterDone = true
       }
-      data.map( (item:ITTodo) => {
-        if(item.done === filterDone){
+      data.map((item: ITTodo) => {
+        if (item.done === filterDone) {
           tempList.push(item)
         }
       })
@@ -149,7 +140,7 @@ const mapStateToProps = (state: ITInitialState) => ({
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
-  modifyTodo: (value: any) =>{dispatch(modify_todo(value))}
+  modifyTodo: (value: any) => { dispatch(modify_todo(value)) }
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home)

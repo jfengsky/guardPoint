@@ -12,13 +12,13 @@ export default (req: any) => {
     tag,
     done
   } = param
-  switch(type) {
+  switch (type) {
     case 'add':
-      return todoDB.save({_id, title, desc, date, tag, done})
+      return todoDB.save({ _id, title, desc, date, tag, done })
     case 'search':
-      return todoDB.search({_id})
+      return todoDB.search({ _id })
     case 'modify':
-      return todoDB.updata({_id, title, desc, date, tag, done})
+      return todoDB.updata({ _id, title, desc, date, tag, done })
     // case 'delete':
     // case 'modify'
   }

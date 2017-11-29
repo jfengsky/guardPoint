@@ -331,4 +331,4 @@ const mapDispatchToProps = (dispatch: any) => ({
   addTodo: (value: ITTodo): void => { dispatch(add_todo(value)) }
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(TodoEditCmp)
+export default connect(mapStateToProps, mapDispatchToProps)(TodoEditCmp) 

@@ -184,7 +184,7 @@ class Time extends React.Component<ITProps, ITState> {
       disSlide
     } = this.state
 
-    if(timeInterval && !isStoping){
+    if (timeInterval && !isStoping) {
       clearInterval(timeInterval)
       isStoping = true
       return
@@ -193,7 +193,7 @@ class Time extends React.Component<ITProps, ITState> {
     if (!todoItem.done && inputValue) {
       let totalSecond = inputValue * 60
 
-      if(isStoping){
+      if (isStoping) {
         timeInterval = setInterval(() => {
           totalSecond--
           let tempDate = new Date(totalSecond * 1000)

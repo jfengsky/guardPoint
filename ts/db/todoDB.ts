@@ -28,7 +28,7 @@ export default {
     })
   },
 
-  updata<T>(data:ITTodo) {
+  updata<T>(data: ITTodo) {
     let {
       title,
       desc,
@@ -43,7 +43,7 @@ export default {
         let where = {
           _id: new ObjectID(_id)
         }
-        collection.update(where,{$set:{title, desc, date, tag, done}}, (inerr:any , docs: any) => {
+        collection.update(where, { $set: { title, desc, date, tag, done } }, (inerr: any, docs: any) => {
           resolve({})
           db.close()
         })
@@ -66,7 +66,7 @@ export default {
           if (searchErr) {
             reject(`search error`)
           } else {
-            resolve({data: result})
+            resolve({ data: result })
             // resolve({ data: result.map(({ _id }) => ({ _id })) })
           }
           db.close()

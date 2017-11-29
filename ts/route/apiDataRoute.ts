@@ -13,12 +13,12 @@ export default async (req: any) => {
     apiId,
     name
   } = param
-  switch(type) {
+  switch (type) {
     case 'add':
       // todo 保存文件
       let fileName: string = await file.write(name, code)
-      return apiDataDB.save({fileName, desc, apiId})
-      // return apiDataDB.save({name, desc})
+      return apiDataDB.save({ fileName, desc, apiId })
+    // return apiDataDB.save({name, desc})
     // case 'search':
     //   return apiDataDB.search({_id})
     // case 'modify':

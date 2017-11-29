@@ -6,6 +6,7 @@ const headers = {
   'Content-Type': 'application/json'
 }
 
+// 待办事项
 export const FETCH_TODO = async (data: ITTodoApi) => {
   let option: any = {
     method: 'post',
@@ -15,6 +16,7 @@ export const FETCH_TODO = async (data: ITTodoApi) => {
   return await fetch(todo, option).then((Response: any) => Response.json())
 }
 
+// 代理接口
 export const FETCH_API = async (data: ITApiFetch) => {
   let option: any = {
     method: 'post',
@@ -24,6 +26,7 @@ export const FETCH_API = async (data: ITApiFetch) => {
   return await fetch(apis, option).then((Response: any) => Response.json())
 }
 
+// 代理接口数据
 export const FETCH_APIDATA = async (data: ITApiDataFetch) => {
   let option: any = {
     method: 'post',

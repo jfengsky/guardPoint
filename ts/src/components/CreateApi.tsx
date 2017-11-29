@@ -59,7 +59,7 @@ class CreateApi extends React.Component<UserFormProps, ITState> {
     this.setState({
       _id
     })
-  }
+  } 
 
   componentWillReceiveProps(nextProps: any) {
     let {

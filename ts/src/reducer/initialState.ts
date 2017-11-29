@@ -63,7 +63,7 @@ export default {
             name: '代理接口列表',
             show: true,
             icon: 'bars'
-        },{
+        }, {
             path: '/api/createApi',
             component: 'CreateApi',
             name: '创建代理接口',

@@ -25,7 +25,7 @@ export default {
     })
   },
 
-  updata<T>(data:ITApiListInfo) {
+  updata<T>(data: ITApiListInfo) {
     let {
       name,
       desc,
@@ -37,7 +37,7 @@ export default {
         let where = {
           _id: new ObjectID(_id)
         }
-        collection.update(where,{$set:{name, desc}}, (inerr:any , docs: any) => {
+        collection.update(where, { $set: { name, desc } }, (inerr: any, docs: any) => {
           resolve({})
           db.close()
         })

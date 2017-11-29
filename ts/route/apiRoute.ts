@@ -9,15 +9,15 @@ export default (req: any) => {
     name,
     desc
   } = param
-  switch(type) {
+  switch (type) {
     case 'add':
-      return apiDB.save({name, desc})
+      return apiDB.save({ name, desc })
     case 'search':
-      return apiDB.search({_id})
+      return apiDB.search({ _id })
     case 'modify':
-      return apiDB.updata({_id, name, desc})
+      return apiDB.updata({ _id, name, desc })
     case 'delete':
-      return apiDB.delete({_id})
+      return apiDB.delete({ _id })
     // case 'modify'
   }
 }
