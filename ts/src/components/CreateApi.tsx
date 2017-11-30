@@ -16,7 +16,7 @@ interface ITFormData {
   value?: string
 }
 
-interface UserFormProps extends FormComponentProps { }
+interface UserFormProps extends FormComponentProps {}
 interface ITState {
   _id: string
   apiFormList: Array<ITFormData>
@@ -25,47 +25,46 @@ interface ITState {
 const FormItem = Form.Item
 const formItemLayout = {
   labelCol: { span: 4 },
-  wrapperCol: { span: 8 },
+  wrapperCol: { span: 8 }
 }
 const formTailLayout = {
   labelCol: { span: 4 },
-  wrapperCol: { span: 8, offset: 4 },
+  wrapperCol: { span: 8, offset: 4 }
 }
 
 let hasGetapiList = false
 
 class CreateApi extends React.Component<UserFormProps, ITState> {
-
-  constructor(props: UserFormProps) {
+  constructor (props: UserFormProps) {
     super(props)
     this.state = {
       _id: null,
-      apiFormList: [{
-        label: '代理接口地址',
-        name: 'apiAddress',
-        required: true,
-        placeholder: '请输入代理接口地址'
-      }, {
-        label: '代理接口描述',
-        name: 'apiDesc',
-        required: false,
-        placeholder: '请输入代理接口地址'
-      }]
+      apiFormList: [
+        {
+          label: '代理接口地址',
+          name: 'apiAddress',
+          required: true,
+          placeholder: '请输入代理接口地址'
+        },
+        {
+          label: '代理接口描述',
+          name: 'apiDesc',
+          required: false,
+          placeholder: '请输入代理接口地址'
+        }
+      ]
     }
   }
 
-  componentDidMount() {
+  componentDidMount () {
     let _id = GetQueryString('id')
     this.setState({
       _id
     })
-  } 
+  }
 
-  componentWillReceiveProps(nextProps: any) {
-    let {
-      _id,
-      apiFormList
-    } = this.state
+  componentWillReceiveProps (nextProps: any) {
+    let { _id, apiFormList } = this.state
     let { apiList } = nextProps
     if (!hasGetapiList && apiList.length) {
       let apiInfo: ITApiListInfo = null
@@ -75,62 +74,58 @@ class CreateApi extends React.Component<UserFormProps, ITState> {
           return true
         }
       })
-      apiFormList.map((item: ITFormData) => {
-        switch (item.name) {
-          case 'apiAddress':
-            this.props.form.setFieldsValue({
-              apiAddress: apiInfo.name
-            })
-            break
-          case 'apiDesc':
-            this.props.form.setFieldsValue({
-              apiDesc: apiInfo.desc
-            })
-            break
-        }
-      })
+      if (apiInfo) {
+        apiFormList.map((item: ITFormData) => {
+          switch (item.name) {
+            case 'apiAddress':
+              this.props.form.setFieldsValue({
+                apiAddress: apiInfo.name
+              })
+              break
+            case 'apiDesc':
+              this.props.form.setFieldsValue({
+                apiDesc: apiInfo.desc
+              })
+              break
+          }
+        })
+      }
       hasGetapiList = true
     }
-
   }
 
-  public render(): JSX.Element {
+  public render (): JSX.Element {
     const { getFieldDecorator } = this.props.form
-    let {
-      _id,
-      apiFormList
-    } = this.state
+    let { _id, apiFormList } = this.state
     return (
       <div style={{ paddingTop: 20 }}>
-        {
-          apiFormList.map(({ label, name, required, placeholder, value }, index: number) => {
+        {apiFormList.map(
+          ({ label, name, required, placeholder, value }, index: number) => {
             return (
               <FormItem {...formItemLayout} label={label} key={index}>
                 {getFieldDecorator(name, {
-                  rules: [{
-                    required,
-                    message: placeholder
-                  }],
-                })(
-                  <Input placeholder={placeholder} />
-                  )}
+                  rules: [
+                    {
+                      required,
+                      message: placeholder
+                    }
+                  ]
+                })(<Input placeholder={placeholder} />)}
               </FormItem>
             )
-          })
-        }
+          }
+        )}
         <FormItem {...formTailLayout}>
-          <Button
-            type="primary"
-            htmlType="submit"
-            onClick={this.check}
-          >提交</Button>
+          <Button type='primary' htmlType='submit' onClick={this.check}>
+            提交
+          </Button>
         </FormItem>
       </div>
     )
   }
   check = () => {
     let { _id } = this.state
-    this.props.form.validateFields(async (err) => {
+    this.props.form.validateFields(async err => {
       if (!err) {
         let value: any = this.props.form.getFieldsValue()
         let param: ITApiFetch = {
@@ -157,11 +152,15 @@ interface ITWrapProps {
   apiList: Array<any>
   addAPI: (value: ITApiListInfo) => {}
 }
-interface ITWrapState { }
+interface ITWrapState {}
 
-class WrappedCreateApi extends React.Component<ITWrapProps, ITWrapState>{
-  public render(): any {
-    return <div><CreateApiForm {...this.props} /></div>
+class WrappedCreateApi extends React.Component<ITWrapProps, ITWrapState> {
+  public render (): any {
+    return (
+      <div>
+        <CreateApiForm {...this.props} />
+      </div>
+    )
   }
 }
 
@@ -170,7 +169,9 @@ const mapStateToProps = (state: ITInitialState) => ({
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
-  addAPI: (value: ITApiListInfo): void => { dispatch(add_api(value)) }
+  addAPI: (value: ITApiListInfo): void => {
+    dispatch(add_api(value))
+  }
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(WrappedCreateApi)

@@ -479,6 +479,14 @@ exports.default = {
 
 "use strict";
 
+var __assign = (this && this.__assign) || Object.assign || function(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+            t[p] = s[p];
+    }
+    return t;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -519,7 +527,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var apiDataDB_1 = __webpack_require__(14);
 var apiDataFile_1 = __webpack_require__(15);
 exports.default = function (req) { return __awaiter(_this, void 0, void 0, function () {
-    var param, type, _id, code, desc, apiId, name, _a, fileName;
+    var param, type, _id, code, desc, apiId, name, _a, fileName, idSearchResult, code_1, modifyfileName, deletefileName;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -528,21 +536,42 @@ exports.default = function (req) { return __awaiter(_this, void 0, void 0, funct
                 _a = type;
                 switch (_a) {
                     case 'add': return [3 /*break*/, 1];
+                    case 'search': return [3 /*break*/, 3];
+                    case 'modify': return [3 /*break*/, 7];
+                    case 'delete': return [3 /*break*/, 9];
                 }
-                return [3 /*break*/, 3];
+                return [3 /*break*/, 11];
             case 1: return [4 /*yield*/, apiDataFile_1.default.write(name, code)];
             case 2:
                 fileName = _b.sent();
-                return [2 /*return*/, apiDataDB_1.default.save({ fileName: fileName, desc: desc, apiId: apiId })
-                    // return apiDataDB.save({name, desc})
-                    // case 'search':
-                    //   return apiDataDB.search({_id})
-                    // case 'modify':
-                    //   return apiDataDB.updata({_id, name, desc})
-                    // case 'delete':
-                    //   return apiDataDB.delete({_id})
+                return [2 /*return*/, apiDataDB_1.default.save({ fileName: fileName, desc: desc, apiId: apiId })];
+            case 3:
+                if (!apiId) return [3 /*break*/, 4];
+                return [2 /*return*/, apiDataDB_1.default.search({ apiId: apiId })];
+            case 4:
+                if (!_id) return [3 /*break*/, 7];
+                return [4 /*yield*/, apiDataDB_1.default.search({ _id: _id })
+                    // 再根据文件名去读取文件内容
                 ];
-            case 3: return [2 /*return*/];
+            case 5:
+                idSearchResult = _b.sent();
+                return [4 /*yield*/, apiDataFile_1.default.read(idSearchResult.data[0].fileName)];
+            case 6:
+                code_1 = _b.sent();
+                return [2 /*return*/, {
+                        data: __assign({}, idSearchResult.data[0], { code: code_1 })
+                    }];
+            case 7: return [4 /*yield*/, apiDataFile_1.default.write(name, code)];
+            case 8:
+                modifyfileName = _b.sent();
+                return [2 /*return*/, apiDataDB_1.default.updated({ _id: _id, desc: desc, apiId: apiId })];
+            case 9: return [4 /*yield*/, apiDataFile_1.default.delete(name)];
+            case 10:
+                deletefileName = _b.sent();
+                return [2 /*return*/, apiDataDB_1.default.delete({ _id: _id })
+                    // return apiDataDB.delete({_id})
+                ];
+            case 11: return [2 /*return*/];
         }
     });
 }); };
@@ -566,6 +595,62 @@ exports.default = {
                 collection.insert({ fileName: fileName, desc: desc, apiId: apiId, time: new Date().getTime() }, function (inerr, docs) {
                     var _id = docs.ops[0]._id;
                     resolve({ data: { _id: _id } });
+                    db.close();
+                });
+            });
+        });
+    },
+    search: function (data) {
+        var _id = data._id, apiId = data.apiId;
+        return new Promise(function (resolve, reject) {
+            dbConfig_1.MongoClient.connect(dbConfig_1.URL, function (err, db) {
+                var collection = db.collection(colName);
+                var where = {};
+                if (_id) {
+                    where = {
+                        _id: new dbConfig_1.ObjectID(_id)
+                    };
+                }
+                if (apiId) {
+                    where = { apiId: apiId };
+                }
+                collection.find(where).toArray(function (searchErr, result) {
+                    if (searchErr) {
+                        reject("search error");
+                    }
+                    else {
+                        resolve({ data: result });
+                    }
+                    db.close();
+                });
+            });
+        });
+    },
+    updated: function (data) {
+        var _id = data._id, desc = data.desc, apiId = data.apiId;
+        return new Promise(function (resolve, reject) {
+            dbConfig_1.MongoClient.connect(dbConfig_1.URL, function (err, db) {
+                var collection = db.collection(colName);
+                var where = {
+                    _id: new dbConfig_1.ObjectID(_id)
+                };
+                collection.update(where, { $set: { apiId: apiId, desc: desc } }, function (inerr, docs) {
+                    resolve({});
+                    db.close();
+                });
+            });
+        });
+    },
+    delete: function (data) {
+        var _id = data._id;
+        return new Promise(function (resolve, reject) {
+            dbConfig_1.MongoClient.connect(dbConfig_1.URL, function (err, db) {
+                var collection = db.collection(colName);
+                var where = {
+                    _id: new dbConfig_1.ObjectID(_id)
+                };
+                collection.remove(where, function (inerr, docs) {
+                    resolve({});
                     db.close();
                 });
             });
