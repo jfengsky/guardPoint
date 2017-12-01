@@ -8,7 +8,9 @@ import { ITLayout, layout } from './layout'
 import { apiList } from '../src/store/apis'
 import route from '../route/route'
 
-const clientPort: number = 3600
+import { checkIsProxy } from './comment'
+
+const clientPort: number = 8989
 const app = express()
 const upload = multer()
 app.use(bodyParser.json({ limit: '50mb' }))
@@ -16,15 +18,22 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.static('./dist'))
 app.use(express.static('./public'))
 
-app.get('*', (req, res) => {
+// 获取所有代理接口地址
 
-  const clientProp: ITLayout = {
-    title: 'server',
-    content: '',
-    __INITSTATE__: {}
+app.get('*', async (req, res) => {
+  // 判断是否代理接口地址，如果是，则返回代理数据，如果不是，则返回空
+  let ProxyApiData = await checkIsProxy(req.path)
+
+  if (ProxyApiData) {
+  } else {
+    const clientProp: ITLayout = {
+      title: 'server',
+      content: '',
+      __INITSTATE__: {}
+    }
+
+    res.send(layout(clientProp))
   }
-
-  res.send(layout(clientProp))
 })
 
 app.post('*', async (req, res) => {
@@ -35,4 +44,6 @@ app.post('*', async (req, res) => {
   }
 })
 
-app.listen(clientPort, () => console.log(`start client: http://localhost:${clientPort}`))
+app.listen(clientPort, () =>
+  console.log(`start client: http://localhost:${clientPort}`)
+)
