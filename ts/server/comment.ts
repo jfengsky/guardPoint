@@ -1,5 +1,7 @@
 import apiDB from '../db/apiDB'
 import apiDataDB from '../db/apiDataDB'
+import selectedApiDataDB from '../db/selectedApiDataDB'
+import file from '../db/apiDataFile'
 
 import { ITInitialState, ITApiListInfo, ITApiDataFetch } from '../src/interface'
 
@@ -13,11 +15,24 @@ export const checkIsProxy = async (path: string) => {
     }
   })
   if (apiId) {
-    let apiDataResult = await apiDataDB.search({
+    let apiDataResult: any = await apiDataDB.search({
       apiId: apiId.toString()
     })
 
-    return 'aaaa'
+    let selectedDataResult: any = await selectedApiDataDB.search({
+      apiId: apiId.toString()
+    })
+
+    let setlectedApiData: any = {}
+    apiDataResult.data.some((item: any) => {
+      if (item._id.toString() === selectedDataResult.data[0].apiDataId) {
+        setlectedApiData = item
+        return true
+      }
+    })
+
+    let readResult = await file.read(setlectedApiData.fileName)
+    return readResult
   } else {
     return ''
   }

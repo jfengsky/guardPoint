@@ -1,8 +1,8 @@
-import { todo, apis, apiDatas } from './apis'
+import { todo, apis, apiDatas, selectApiData } from './apis'
 
 import { ITTodoApi, ITApiFetch, ITApiDataFetch } from '../interface'
 const headers = {
-  'Accept': 'application/json',
+  Accept: 'application/json',
   'Content-Type': 'application/json'
 }
 
@@ -34,4 +34,16 @@ export const FETCH_APIDATA = async (data: ITApiDataFetch) => {
     body: JSON.stringify(data)
   }
   return await fetch(apiDatas, option).then((Response: any) => Response.json())
+}
+
+// 选择的代理数据接口
+export const FETCH_SELECT_APIDATA = async (data: any) => {
+  let option: any = {
+    method: 'post',
+    headers,
+    body: JSON.stringify(data)
+  }
+  return await fetch(selectApiData, option).then((Response: any) =>
+    Response.json()
+  )
 }

@@ -29,3 +29,9 @@ export const updata_apilist = (value: Array<ITApiListInfo>) => ({
   type: UPAPI_APILIST,
   value
 })
+
+// export const SELECT_APIDATA: string = 'SELECT_APIDATA'
+// export const select_apidata = (value: any) => ({
+//   type: SELECT_APIDATA,
+//   value
+// })

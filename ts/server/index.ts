@@ -25,6 +25,7 @@ app.get('*', async (req, res) => {
   let ProxyApiData = await checkIsProxy(req.path)
 
   if (ProxyApiData) {
+    res.send(JSON.parse(ProxyApiData))
   } else {
     const clientProp: ITLayout = {
       title: 'server',

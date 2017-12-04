@@ -171,7 +171,7 @@ class ApiData extends React.Component<UserFormProps, ITState> {
         }
         let result = await FETCH_APIDATA(param)
         if (!result.state) {
-          location.reload()
+          location.href = '/api/apiDataList?id=' + apiType
         }
       }
     })
