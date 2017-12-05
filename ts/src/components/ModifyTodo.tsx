@@ -4,7 +4,12 @@ import { Form, Input, Icon, Checkbox, Button, DatePicker, Switch } from 'antd'
 import { FormComponentProps } from 'antd/lib/form/Form'
 import * as moment from 'moment'
 
-import { ITInitialState, ITTodo, ITTodoApi, ITTodoTagOption } from '../interface'
+import {
+  ITInitialState,
+  ITTodo,
+  ITTodoApi,
+  ITTodoTagOption
+} from '../interface'
 import { add_todo } from '../action'
 import { GetQueryString } from '../util'
 import { FETCH_TODO } from '../store/request'
@@ -24,11 +29,11 @@ interface ITfromList {
   option: any
 }
 
-
 interface ITState {
   _id: string
   todoItem: ITTodo
   formList: Array<ITfromList>
+  dateList: Array<any>
 }
 
 interface UserFormProps extends FormComponentProps {
@@ -38,82 +43,80 @@ interface UserFormProps extends FormComponentProps {
 
 const formItemLayout = {
   labelCol: { span: 4 },
-  wrapperCol: { span: 14 },
+  wrapperCol: { span: 14 }
 }
 
 const formTailLayout = {
   labelCol: { span: 4 },
-  wrapperCol: { span: 8, offset: 4 },
+  wrapperCol: { span: 8, offset: 4 }
 }
-
 
 let hasChange: boolean = false
 
 let submitDate: Array<string> = []
-
+const formatDate = 'YYYY-MM-DD'
 class TodoEdit extends React.Component<UserFormProps, ITState> {
-
-  constructor(props: any) {
+  constructor (props: any) {
     super(props)
 
     this.state = {
       _id: null,
       todoItem: null,
-      formList: null
+      formList: null,
+      dateList: []
     }
   }
 
-  componentWillMount() {
-
+  componentWillMount () {
     let { todoTags } = this.props
 
     this.setState({
-      formList: [{
-        name: 'todoTitle',
-        label: '任务',
-        required: true,
-        message: '请输入任务标题',
-        type: 'Input',
-        option: {
-          placeholder: '任务标题',
+      formList: [
+        {
+          name: 'todoTitle',
+          label: '任务',
+          required: true,
+          message: '请输入任务标题',
+          type: 'Input',
+          option: {
+            placeholder: '任务标题'
+          }
+        },
+        {
+          name: 'todoDesc',
+          label: '描述',
+          required: false,
+          message: '',
+          type: 'TextArea',
+          option: {
+            placeholder: ''
+          }
+        },
+        {
+          name: 'todoTag',
+          label: '任务类型',
+          required: false,
+          message: '',
+          type: 'CheckboxGroup',
+          option: {
+            options: todoTags,
+            onChange: this.tagChange
+          }
         }
-      }, {
-        name: 'todoDesc',
-        label: '描述',
-        required: false,
-        message: '',
-        type: 'TextArea',
-        option: {
-          placeholder: '',
-        }
-      }, {
-        name: 'todoTag',
-        label: '任务类型',
-        required: false,
-        message: '',
-        type: 'CheckboxGroup',
-        option: {
-          options: todoTags,
-          onChange: this.tagChange
-        }
-      }]
+      ]
     })
   }
 
-  componentDidMount() {
+  componentDidMount () {
     let _id = GetQueryString('id')
     this.setState({
       _id
     })
   }
 
-  componentWillReceiveProps(nextProps: any) {
-    let {
-      todoList
-    } = nextProps
-    let {
-      formList
-    } = this.state
+  componentWillReceiveProps (nextProps: any) {
+    let { todoList } = nextProps
+    let { formList } = this.state
     if (todoList.length && this.state._id) {
       let todoItem: ITTodo
       todoList.some((item: ITTodo) => {
@@ -124,15 +127,17 @@ class TodoEdit extends React.Component<UserFormProps, ITState> {
       })
       submitDate = todoItem.date
       this.setState({
-        todoItem
+        todoItem,
+        dateList: [
+          moment(todoItem.date[0], formatDate),
+          moment(todoItem.date[1], formatDate)
+        ]
       })
     }
   }
 
-  componentDidUpdate() {
-    let {
-      todoItem
-    } = this.state
+  componentDidUpdate () {
+    let { todoItem } = this.state
     if (todoItem && !hasChange) {
       for (let key in todoItem) {
         switch (key) {
@@ -150,7 +155,7 @@ class TodoEdit extends React.Component<UserFormProps, ITState> {
             this.props.form.setFieldsValue({
               todoTag: todoItem[key]
             })
-            break;
+            break
           // case 'done':
           //   this.props.form.setFieldsValue({
           //     todoDone: { checked: todoItem[key] }
@@ -162,24 +167,20 @@ class TodoEdit extends React.Component<UserFormProps, ITState> {
     }
   }
 
-  public render(): JSX.Element {
-
+  public render (): JSX.Element {
     const { getFieldDecorator } = this.props.form
 
-    let { formList, todoItem } = this.state
+    let { formList, todoItem, dateList } = this.state
 
-    const formatDate = 'YYYY-MM-DD'
-
-    let dateValue: any = []
-    if (todoItem) {
-      dateValue[0] = moment(todoItem.date[0], formatDate)
-      dateValue[1] = moment(todoItem.date[1], formatDate)
-    }
+    let dateValue: any = dateList
 
     return (
       <Form layout='horizontal' style={{ paddingTop: 10 }}>
-        {
-          formList.map(({ name, label, required, message, option, type }: ITfromList, index: number): JSX.Element => {
+        {formList.map(
+          (
+            { name, label, required, message, option, type }: ITfromList,
+            index: number
+          ): JSX.Element => {
             let FormCmp: any
             switch (type) {
               case 'TextArea':
@@ -197,49 +198,50 @@ class TodoEdit extends React.Component<UserFormProps, ITState> {
             }
 
             return (
-              <FormItem key={index} label={label} {...formItemLayout} >
+              <FormItem key={index} label={label} {...formItemLayout}>
                 {getFieldDecorator(name, {
-                  rules: [{ required, message }],
-                })(
-                  <FormCmp {...option} />
-                  )}
+                  rules: [{ required, message }]
+                })(<FormCmp {...option} />)}
               </FormItem>
             )
-          })
-        }
+          }
+        )}
 
-        <div className="ant-row ant-form-item">
-          <div className="ant-col-4 ant-form-item-label">
+        <div className='ant-row ant-form-item'>
+          <div className='ant-col-4 ant-form-item-label'>
             <label>任务时间</label>
           </div>
-          <div className="ant-col-14 ant-form-item-control-wrapper">
-            <div className="ant-form-item-control ">
+          <div className='ant-col-14 ant-form-item-control-wrapper'>
+            <div className='ant-form-item-control '>
               <RangePicker
                 value={dateValue}
-                onChange={this.dateChange}
+                onChange={this.dateChange.bind(this)}
                 format={formatDate}
               />
             </div>
           </div>
         </div>
 
-        <div className="ant-row ant-form-item">
-          <div className="ant-col-4 ant-form-item-label">
+        <div className='ant-row ant-form-item'>
+          <div className='ant-col-4 ant-form-item-label'>
             <label>是否完成</label>
           </div>
-          <div className="ant-col-14 ant-form-item-control-wrapper">
-            <div className="ant-form-item-control ">
-              <Switch checkedChildren="是" unCheckedChildren="否" onChange={this.doneChange} checked={todoItem ? todoItem.done : false} />
+          <div className='ant-col-14 ant-form-item-control-wrapper'>
+            <div className='ant-form-item-control '>
+              <Switch
+                checkedChildren='是'
+                unCheckedChildren='否'
+                onChange={this.doneChange}
+                checked={todoItem ? todoItem.done : false}
+              />
             </div>
           </div>
         </div>
 
         <FormItem {...formTailLayout}>
-          <Button
-            type="primary"
-            htmlType="submit"
-            onClick={this.check}
-          >提交</Button>
+          <Button type='primary' htmlType='submit' onClick={this.check}>
+            提交
+          </Button>
         </FormItem>
       </Form>
     )
@@ -247,6 +249,12 @@ class TodoEdit extends React.Component<UserFormProps, ITState> {
 
   dateChange = (date: any, dateString: any) => {
     submitDate = dateString
+    this.setState({
+      dateList: [
+        moment(dateString[0], formatDate),
+        moment(dateString[1], formatDate)
+      ]
+    })
   }
 
   tagChange = (value: Array<number>) => {
@@ -254,9 +262,7 @@ class TodoEdit extends React.Component<UserFormProps, ITState> {
   }
 
   doneChange = (value: boolean) => {
-    let {
-      todoItem
-    } = this.state
+    let { todoItem } = this.state
     this.setState({
       todoItem: Object.assign({}, todoItem, {
         done: value
@@ -265,45 +271,38 @@ class TodoEdit extends React.Component<UserFormProps, ITState> {
   }
 
   check = () => {
-    let {
-      todoItem,
-      _id
-    } = this.state
-    this.props.form.validateFields(
-      async (err) => {
-        if (!err) {
-          let values: any = this.props.form.getFieldsValue()
-          let {
-            todoTitle: title,
-            todoDesc: desc,
-            todoTag: tag,
-            // todoDone: done
-          } = values
+    let { todoItem, _id } = this.state
+    this.props.form.validateFields(async err => {
+      if (!err) {
+        let values: any = this.props.form.getFieldsValue()
+        let {
+          todoTitle: title,
+          todoDesc: desc,
+          todoTag: tag
+          // todoDone: done
+        } = values
 
-          let param: ITTodoApi = {
-            type: 'add',
-            title,
-            desc,
-            date: submitDate,
-            tag,
-            done: todoItem ? todoItem.done : false
-          }
+        let param: ITTodoApi = {
+          type: 'add',
+          title,
+          desc,
+          date: submitDate,
+          tag,
+          done: todoItem ? todoItem.done : false
+        }
 
-          if (_id) {
-            param.type = 'modify'
-            param._id = _id
-          }
+        if (_id) {
+          param.type = 'modify'
+          param._id = _id
+        }
 
-          let result = await FETCH_TODO(param)
-          if (!result.state) {
-            location.reload()
-          }
-
+        let result = await FETCH_TODO(param)
+        if (!result.state) {
+          location.href = `/time?id=${result.data._id}`
         }
       }
-    )
+    })
   }
-
 }
 
 const WrappedTodoEdit = Form.create()(TodoEdit)
@@ -314,11 +313,15 @@ interface ITTodoProps {
   addTodo: (value: ITTodo) => {}
 }
 
-interface ITTodoState { }
+interface ITTodoState {}
 
-class TodoEditCmp extends React.Component<ITTodoProps, ITTodoState>{
-  public render(): any {
-    return <div><WrappedTodoEdit {...this.props} /></div>
+class TodoEditCmp extends React.Component<ITTodoProps, ITTodoState> {
+  public render (): any {
+    return (
+      <div>
+        <WrappedTodoEdit {...this.props} />
+      </div>
+    )
   }
 }
 
@@ -328,7 +331,9 @@ const mapStateToProps = (state: ITInitialState) => ({
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
-  addTodo: (value: ITTodo): void => { dispatch(add_todo(value)) }
+  addTodo: (value: ITTodo): void => {
+    dispatch(add_todo(value))
+  }
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(TodoEditCmp) 
+export default connect(mapStateToProps, mapDispatchToProps)(TodoEditCmp)

@@ -38,10 +38,15 @@ app.get('*', async (req, res) => {
 })
 
 app.post('*', async (req, res) => {
-  if (apiList.indexOf(req.path) >= 0) {
-    route(req, res)
+  let ProxyApiData = await checkIsProxy(req.path)
+  if (ProxyApiData) {
+    res.send(JSON.parse(ProxyApiData))
   } else {
-    res.sendStatus(404)
+    if (apiList.indexOf(req.path) >= 0) {
+      route(req, res)
+    } else {
+      res.sendStatus(404)
+    }
   }
 })
 

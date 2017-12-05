@@ -334,14 +334,25 @@ app.get('*', function (req, res) { return __awaiter(_this, void 0, void 0, funct
     });
 }); });
 app.post('*', function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+    var ProxyApiData;
     return __generator(this, function (_a) {
-        if (apis_1.apiList.indexOf(req.path) >= 0) {
-            route_1.default(req, res);
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, comment_1.checkIsProxy(req.path)];
+            case 1:
+                ProxyApiData = _a.sent();
+                if (ProxyApiData) {
+                    res.send(JSON.parse(ProxyApiData));
+                }
+                else {
+                    if (apis_1.apiList.indexOf(req.path) >= 0) {
+                        route_1.default(req, res);
+                    }
+                    else {
+                        res.sendStatus(404);
+                    }
+                }
+                return [2 /*return*/];
         }
-        else {
-            res.sendStatus(404);
-        }
-        return [2 /*return*/];
     });
 }); });
 app.listen(clientPort, function () {
