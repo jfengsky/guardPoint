@@ -4,7 +4,6 @@ export interface ITAction {
 }
 
 export interface ITRoute {
-
   // 路径
   path: string
 
@@ -25,23 +24,25 @@ export interface ITRoute {
 }
 
 export interface ITTodo {
-
   _id?: string
 
   // 任务标题
   title: string
 
   // 任务描述
-  desc: string,
+  desc: string
 
   // 任务开始，结束时间
-  date: Array<string>,
+  date: Array<string>
 
   // 任务标签
   tag: Array<number>
 
   // 是否完成
   done: boolean
+
+  // 开发分支
+  branch: string
 }
 
 export interface ITTodoApi {
@@ -52,6 +53,7 @@ export interface ITTodoApi {
   date?: Array<string>
   tag?: Array<number>
   done?: boolean
+  branch?: string
 }
 
 export interface ITApiFetch {
@@ -75,7 +77,6 @@ export interface ITApiDataFetch {
 // }
 
 export interface ITTodoTagOption {
-
   // 标签名
   label: string
 
@@ -97,7 +98,6 @@ export interface ITApiListInfo {
 }
 
 export interface ITInitialState {
-
   // 接口列表
   apiList: Array<ITApiListInfo>
 
@@ -112,5 +112,4 @@ export interface ITInitialState {
 
   // todo列表
   todoList: Array<ITTodo>
-
 }

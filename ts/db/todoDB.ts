@@ -5,56 +5,45 @@ import { ITTodo } from '../src/interface'
 const colName: string = 'todoList'
 
 export default {
-  save<T>(data: ITTodo) {
-    let {
-      title,
-      desc,
-      date,
-      tag,
-      done
-    } = data
+  save<T> (data: ITTodo) {
+    let { title, desc, date, tag, branch, done } = data
     return new Promise((resolve, reject) => {
       MongoClient.connect(URL, (err: any, db: any) => {
         const collection = db.collection(colName)
-        collection.insert({ title, desc, date, tag, done, time: new Date().getTime() }, (inerr: any, docs: any) => {
-          let {
-            title,
-            _id
-          } = docs.ops[0]
-          resolve({ data: { _id } })
-          db.close()
-        })
+        collection.insert(
+          { title, desc, date, tag, done, branch, time: new Date().getTime() },
+          (inerr: any, docs: any) => {
+            let { title, _id } = docs.ops[0]
+            resolve({ data: { _id } })
+            db.close()
+          }
+        )
       })
     })
   },
 
-  updata<T>(data: ITTodo) {
-    let {
-      title,
-      desc,
-      date,
-      tag,
-      done,
-      _id
-    } = data
+  updata<T> (data: ITTodo) {
+    let { title, desc, date, tag, done, branch, _id } = data
     return new Promise((resolve, reject) => {
       MongoClient.connect(URL, (err: any, db: any) => {
         const collection = db.collection(colName)
         let where = {
           _id: new ObjectID(_id)
         }
-        collection.update(where, { $set: { title, desc, date, tag, done } }, (inerr: any, docs: any) => {
-          resolve({})
-          db.close()
-        })
+        collection.update(
+          where,
+          { $set: { title, desc, date, tag, branch, done } },
+          (inerr: any, docs: any) => {
+            resolve({})
+            db.close()
+          }
+        )
       })
     })
   },
 
-  search<T>(data: any) {
-    let {
-      _id
-    } = data
+  search<T> (data: any) {
+    let { _id } = data
     return new Promise((resolve, reject) => {
       MongoClient.connect(URL, (err: any, db: any) => {
         const collection = db.collection(colName)
@@ -74,4 +63,4 @@ export default {
       })
     })
   }
-} 
+}

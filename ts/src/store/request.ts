@@ -1,4 +1,4 @@
-import { todo, apis, apiDatas, selectApiData } from './apis'
+import { todo, apis, apiDatas, selectApiData, trace } from './apis'
 
 import { ITTodoApi, ITApiFetch, ITApiDataFetch } from '../interface'
 const headers = {
@@ -46,4 +46,13 @@ export const FETCH_SELECT_APIDATA = async (data: any) => {
   return await fetch(selectApiData, option).then((Response: any) =>
     Response.json()
   )
+}
+
+export const FETCH_TRACELOG = async (data: any) => {
+  let option: any = {
+    method: 'post',
+    headers,
+    body: JSON.stringify(data)
+  }
+  return await fetch(trace, option).then((Response: any) => Response.json())
 }

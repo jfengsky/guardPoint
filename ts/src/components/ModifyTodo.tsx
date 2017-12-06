@@ -93,6 +93,16 @@ class TodoEdit extends React.Component<UserFormProps, ITState> {
           }
         },
         {
+          name: 'todoBranch',
+          label: '开发分支',
+          required: false,
+          message: '',
+          type: 'Input',
+          option: {
+            placeholder: ''
+          }
+        },
+        {
           name: 'todoTag',
           label: '任务类型',
           required: false,
@@ -154,6 +164,11 @@ class TodoEdit extends React.Component<UserFormProps, ITState> {
           case 'tag':
             this.props.form.setFieldsValue({
               todoTag: todoItem[key]
+            })
+            break
+          case 'branch':
+            this.props.form.setFieldsValue({
+              todoBranch: todoItem[key]
             })
             break
           // case 'done':
@@ -278,7 +293,8 @@ class TodoEdit extends React.Component<UserFormProps, ITState> {
         let {
           todoTitle: title,
           todoDesc: desc,
-          todoTag: tag
+          todoTag: tag,
+          todoBranch: branch
           // todoDone: done
         } = values
 
@@ -288,6 +304,7 @@ class TodoEdit extends React.Component<UserFormProps, ITState> {
           desc,
           date: submitDate,
           tag,
+          branch,
           done: todoItem ? todoItem.done : false
         }
 
@@ -298,7 +315,8 @@ class TodoEdit extends React.Component<UserFormProps, ITState> {
 
         let result = await FETCH_TODO(param)
         if (!result.state) {
-          location.href = `/time?id=${result.data._id}`
+          let resultId = _id || result.data._id
+          location.href = `/time?id=${resultId}`
         }
       }
     })

@@ -87,7 +87,8 @@ exports.todo = '/todo';
 exports.apis = '/apis';
 exports.apiDatas = '/apiDatas';
 exports.selectApiData = '/selectApiData';
-exports.apiList = [exports.todo, exports.apis, exports.apiDatas, exports.selectApiData];
+exports.trace = './trace';
+exports.apiList = [exports.todo, exports.apis, exports.apiDatas, exports.selectApiData, exports.trace];
 
 
 /***/ }),
@@ -486,14 +487,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var todoDB_1 = __webpack_require__(11);
 exports.default = function (req) {
     var param = req.body;
-    var type = param.type, _id = param._id, title = param.title, desc = param.desc, date = param.date, tag = param.tag, done = param.done;
+    var type = param.type, _id = param._id, title = param.title, desc = param.desc, date = param.date, tag = param.tag, branch = param.branch, done = param.done;
     switch (type) {
         case 'add':
-            return todoDB_1.default.save({ _id: _id, title: title, desc: desc, date: date, tag: tag, done: done });
+            return todoDB_1.default.save({ _id: _id, title: title, branch: branch, desc: desc, date: date, tag: tag, done: done });
         case 'search':
             return todoDB_1.default.search({ _id: _id });
         case 'modify':
-            return todoDB_1.default.updata({ _id: _id, title: title, desc: desc, date: date, tag: tag, done: done });
+            return todoDB_1.default.updata({ _id: _id, title: title, desc: desc, date: date, tag: tag, done: done, branch: branch });
     }
 };
 
@@ -509,11 +510,11 @@ var dbConfig_1 = __webpack_require__(0);
 var colName = 'todoList';
 exports.default = {
     save: function (data) {
-        var title = data.title, desc = data.desc, date = data.date, tag = data.tag, done = data.done;
+        var title = data.title, desc = data.desc, date = data.date, tag = data.tag, branch = data.branch, done = data.done;
         return new Promise(function (resolve, reject) {
             dbConfig_1.MongoClient.connect(dbConfig_1.URL, function (err, db) {
                 var collection = db.collection(colName);
-                collection.insert({ title: title, desc: desc, date: date, tag: tag, done: done, time: new Date().getTime() }, function (inerr, docs) {
+                collection.insert({ title: title, desc: desc, date: date, tag: tag, done: done, branch: branch, time: new Date().getTime() }, function (inerr, docs) {
                     var _a = docs.ops[0], title = _a.title, _id = _a._id;
                     resolve({ data: { _id: _id } });
                     db.close();
@@ -522,14 +523,14 @@ exports.default = {
         });
     },
     updata: function (data) {
-        var title = data.title, desc = data.desc, date = data.date, tag = data.tag, done = data.done, _id = data._id;
+        var title = data.title, desc = data.desc, date = data.date, tag = data.tag, done = data.done, branch = data.branch, _id = data._id;
         return new Promise(function (resolve, reject) {
             dbConfig_1.MongoClient.connect(dbConfig_1.URL, function (err, db) {
                 var collection = db.collection(colName);
                 var where = {
                     _id: new dbConfig_1.ObjectID(_id)
                 };
-                collection.update(where, { $set: { title: title, desc: desc, date: date, tag: tag, done: done } }, function (inerr, docs) {
+                collection.update(where, { $set: { title: title, desc: desc, date: date, tag: tag, branch: branch, done: done } }, function (inerr, docs) {
                     resolve({});
                     db.close();
                 });

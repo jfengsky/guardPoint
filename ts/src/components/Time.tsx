@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { connect } from 'react-redux'
-import { GetQueryString } from '../util'
 import {
   Progress,
   Slider,
@@ -23,6 +22,8 @@ import {
 
 import { modify_todo } from '../action'
 import { FETCH_TODO } from '../store/request'
+import { GetQueryString } from '../util'
+import trace from '../store/tracelog'
 
 const Panel = Collapse.Panel
 
@@ -90,7 +91,6 @@ class Time extends React.Component<ITProps, ITState> {
 
   componentWillUnmount () {
     clearInterval(timeInterval)
-    alert(1111)
   }
 
   public render (): JSX.Element {
@@ -143,7 +143,7 @@ class Time extends React.Component<ITProps, ITState> {
         <Row style={{ paddingTop: 30 }}>
           <Col span={10}>
             {todoItem && (
-              <Collapse defaultActiveKey={['1', '2', '3', '4']}>
+              <Collapse defaultActiveKey={['1', '2', '3', '4', '5']}>
                 <Panel header='任务' key='1'>
                   <p>
                     <strong>{todoItem.title}</strong>
@@ -152,7 +152,10 @@ class Time extends React.Component<ITProps, ITState> {
                 <Panel header='描述' key='2'>
                   <p>{todoItem.desc}</p>
                 </Panel>
-                <Panel header='时间' key='3'>
+                <Panel header='分支' key='3'>
+                  <p>{todoItem.branch}</p>
+                </Panel>
+                <Panel header='时间' key='4'>
                   <Calendar
                     fullscreen={false}
                     value={moment(todoItem.date[1])}
@@ -160,7 +163,7 @@ class Time extends React.Component<ITProps, ITState> {
                   />
                   <p>{todoItem.date.join('~')}</p>
                 </Panel>
-                <Panel header='标签' key='4'>
+                <Panel header='标签' key='5'>
                   {todoItem.tag.map((item: number) => {
                     return this.props.todoTags.map(
                       ({ value, color, label }: ITTodoTagOption) => {
@@ -175,7 +178,7 @@ class Time extends React.Component<ITProps, ITState> {
                     )
                   })}
                 </Panel>
-                <Panel header='编辑' key='5'>
+                <Panel header='编辑' key='6'>
                   <div>
                     <a href={`/modify/todo?id=${todoItem._id}`}>修改</a>
                   </div>
@@ -278,6 +281,7 @@ class Time extends React.Component<ITProps, ITState> {
             }, 1000)
           }
         )
+        // trace.timer()
       }
     }
   }

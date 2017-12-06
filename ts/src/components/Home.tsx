@@ -16,7 +16,6 @@ const RadioButton = Radio.Button
 const RadioGroup = Radio.Group
 
 interface ITProps {
-
   todoFilter: string
 
   todoList: Array<ITTodo>
@@ -26,45 +25,45 @@ interface ITProps {
   modifyTodo: (value: any) => {}
 }
 interface ITState {
-
   // 过滤方式
   filter: string
 }
 
-const upTodoInfo = (id: string) => {
-
-}
+const upTodoInfo = (id: string) => {}
 
 class Home extends React.Component<ITProps, ITState> {
-  constructor(props: ITProps) {
+  constructor (props: ITProps) {
     super(props)
     this.state = {
       filter: 'active'
     }
   }
-  public render(): JSX.Element {
-
-    let {
-      todoList
-    } = this.props
+  public render (): JSX.Element {
+    let { todoList } = this.props
 
     let showList = this.filterList(todoList, this.state.filter)
 
     return (
       <div style={{ padding: 10 }}>
         <RadioGroup onChange={this.onChange} defaultValue={this.state.filter}>
-          <RadioButton value="all">全部</RadioButton>
-          <RadioButton value="today">今日任务</RadioButton>
-          <RadioButton value="active">未完成</RadioButton>
-          <RadioButton value="completed">结束</RadioButton>
+          <RadioButton value='all'>全部</RadioButton>
+          <RadioButton value='today'>今日任务</RadioButton>
+          <RadioButton value='active'>未完成</RadioButton>
+          <RadioButton value='completed'>结束</RadioButton>
         </RadioGroup>
 
         <Table
-          rowKey="_id"
+          rowKey='_id'
           // rowSelection={this.rowSelection}
           columns={this.columns()}
           dataSource={showList}
-          expandedRowRender={(record: any) => <div><p>{record.desc}</p><p>{record.date}</p></div>}
+          expandedRowRender={(record: any) => (
+            <div>
+              <p>{record.desc}</p>
+              <p>{record.date.join('~')}</p>
+              <p>{record.branch}</p>
+            </div>
+          )}
         />
       </div>
     )
@@ -80,29 +79,39 @@ class Home extends React.Component<ITProps, ITState> {
   // }
 
   columns = () => {
-
-    return [{
-      title: '任务',
-      dataIndex: 'title',
-      render: (text: string, record: any) => {
-        let href = `/time?id=${record._id}`
-        return <a href={href}>{text}</a>
+    return [
+      {
+        title: '任务',
+        dataIndex: 'title',
+        render: (text: string, record: any) => {
+          let href = `/time?id=${record._id}`
+          return <a href={href}>{text}</a>
+        }
       },
-    }, {
-      title: '标签',
-      dataIndex: 'tag',
-      render: (tag: Array<number>) => {
-        let tagName: Array<any> = []
-        this.props.todoTags.map(({ label, value, color }: ITTodoTagOption) => {
-          tag && tag.length && tag.map((tagItem: number) => {
-            if (tagItem === value) {
-              tagName.push(<Tag key={value} color={color}>{label}</Tag>)
+      {
+        title: '标签',
+        dataIndex: 'tag',
+        render: (tag: Array<number>) => {
+          let tagName: Array<any> = []
+          this.props.todoTags.map(
+            ({ label, value, color }: ITTodoTagOption) => {
+              tag &&
+                tag.length &&
+                tag.map((tagItem: number) => {
+                  if (tagItem === value) {
+                    tagName.push(
+                      <Tag key={value} color={color}>
+                        {label}
+                      </Tag>
+                    )
+                  }
+                })
             }
-          })
-        })
-        return tagName
+          )
+          return tagName
+        }
       }
-    }]
+    ]
   }
 
   filterList = (data: Array<ITTodo>, filter: string): Array<ITTodo> => {
@@ -140,7 +149,9 @@ const mapStateToProps = (state: ITInitialState) => ({
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
-  modifyTodo: (value: any) => { dispatch(modify_todo(value)) }
+  modifyTodo: (value: any) => {
+    dispatch(modify_todo(value))
+  }
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home)
