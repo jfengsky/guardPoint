@@ -15,8 +15,8 @@ class CalendarTask extends React.Component<ITProps, ITState> {
   public render (): JSX.Element {
     return (
       <div style={{ padding: 10 }}>
-        <Alert message='Info Text' type='info' showIcon />
-        <Alert message='Warning' type='warning' showIcon />
+        {/* <Alert message='Info Text' type='info' showIcon /> */}
+        {/* <Alert message='Warning' type='warning' showIcon /> */}
         <Calendar dateCellRender={this.dateCellRender} />
       </div>
     )
