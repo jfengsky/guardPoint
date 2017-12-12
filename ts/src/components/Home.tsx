@@ -43,6 +43,9 @@ class Home extends React.Component<ITProps, ITState> {
 
     let showList = this.filterList(todoList, this.state.filter)
 
+    // 倒序
+    showList.reverse()
+
     return (
       <div style={{ padding: 10 }}>
         <RadioGroup onChange={this.onChange} defaultValue={this.state.filter}>
