@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 4);
+/******/ 	return __webpack_require__(__webpack_require__.s = 6);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -70,7 +70,7 @@
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var mongodb = __webpack_require__(12);
+var mongodb = __webpack_require__(14);
 exports.MongoClient = mongodb.MongoClient;
 exports.ObjectID = mongodb.ObjectID;
 exports.URL = 'mongodb://localhost:27017/guardPoint';
@@ -295,14 +295,160 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+Object.defineProperty(exports, "__esModule", { value: true });
+var fs = __webpack_require__(17);
+var path = __webpack_require__(18);
+var filePath = function (name) { return path.join(__dirname, '/../data/') + name + '.json'; };
+exports.default = {
+    write: function (name, code) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, new Promise(function (resolve, reject) {
+                        if (!name) {
+                            name = 'p' + new Date().getTime();
+                        }
+                        var savePath = filePath(name);
+                        fs.writeFile(savePath, code, 'utf-8', function (err) {
+                            resolve(name);
+                        });
+                    })];
+            });
+        });
+    },
+    read: function (name) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, new Promise(function (resolve, reject) {
+                        fs.readFile(filePath(name), 'utf-8', function (err, data) {
+                            resolve(data);
+                        });
+                    })];
+            });
+        });
+    },
+    delete: function (name) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, new Promise(function (resolve, reject) {
+                        fs.unlink(filePath(name), function (err) {
+                            resolve();
+                        });
+                    })];
+            });
+        });
+    }
+};
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var dbConfig_1 = __webpack_require__(0);
+// import { ITApiListInfo } from '../src/interface'
+var colName = 'selectedApiData';
+exports.default = {
+    search: function (data) {
+        var apiId = data.apiId, apiDataId = data.apiDataId;
+        return new Promise(function (resolve, reject) {
+            dbConfig_1.MongoClient.connect(dbConfig_1.URL, function (err, db) {
+                var collection = db.collection(colName);
+                var where = {
+                    apiId: apiId
+                };
+                collection.find(where).toArray(function (searchErr, result) {
+                    if (searchErr) {
+                        reject("search error");
+                    }
+                    else {
+                        resolve({ data: result });
+                    }
+                    db.close();
+                });
+            });
+        });
+    },
+    updata: function (data) {
+        var apiId = data.apiId, apiDataId = data.apiDataId;
+        return new Promise(function (resolve, reject) {
+            dbConfig_1.MongoClient.connect(dbConfig_1.URL, function (err, db) {
+                var collection = db.collection(colName);
+                var where = {
+                    apiId: apiId
+                };
+                collection.find(where).toArray(function (searchErr, result) {
+                    if (!result.length) {
+                        collection.insert({ apiId: apiId, apiDataId: apiDataId, time: new Date().getTime() }, function (inerr, docs) {
+                            var _id = docs.ops[0]._id;
+                            resolve({ data: { _id: _id } });
+                            db.close();
+                        });
+                    }
+                    else {
+                        collection.update(where, { $set: { apiId: apiId, apiDataId: apiDataId } }, function (inerr, docs) {
+                            resolve({});
+                            db.close();
+                        });
+                    }
+                });
+            });
+        });
+    }
+};
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [0, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
 var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
-var express = __webpack_require__(5);
-var bodyParser = __webpack_require__(6);
-var multer = __webpack_require__(7);
-var layout_1 = __webpack_require__(8);
+var express = __webpack_require__(7);
+var bodyParser = __webpack_require__(8);
+var multer = __webpack_require__(9);
+var layout_1 = __webpack_require__(10);
 var apis_1 = __webpack_require__(1);
-var route_1 = __webpack_require__(9);
+var route_1 = __webpack_require__(11);
 var comment_1 = __webpack_require__(20);
 var clientPort = 8989;
 var app = express();
@@ -362,25 +508,25 @@ app.listen(clientPort, function () {
 
 
 /***/ }),
-/* 5 */
+/* 7 */
 /***/ (function(module, exports) {
 
 module.exports = require("express");
 
 /***/ }),
-/* 6 */
+/* 8 */
 /***/ (function(module, exports) {
 
 module.exports = require("body-parser");
 
 /***/ }),
-/* 7 */
+/* 9 */
 /***/ (function(module, exports) {
 
 module.exports = require("multer");
 
 /***/ }),
-/* 8 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -390,7 +536,7 @@ exports.layout = function (props) { return "\n  <html>\n    <head>\n      <meta 
 
 
 /***/ }),
-/* 9 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -433,10 +579,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 var apis_1 = __webpack_require__(1);
-var todoRoute_1 = __webpack_require__(10);
-var apiRoute_1 = __webpack_require__(13);
-var apiDataRoute_1 = __webpack_require__(14);
-var selectApiDataRoute_1 = __webpack_require__(18);
+var todoRoute_1 = __webpack_require__(12);
+var apiRoute_1 = __webpack_require__(15);
+var apiDataRoute_1 = __webpack_require__(16);
+var selectApiDataRoute_1 = __webpack_require__(19);
 var successDate = {
     state: 0,
     data: null
@@ -478,13 +624,13 @@ exports.default = function (req, res) { return __awaiter(_this, void 0, void 0, 
 
 
 /***/ }),
-/* 10 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var todoDB_1 = __webpack_require__(11);
+var todoDB_1 = __webpack_require__(13);
 exports.default = function (req) {
     var param = req.body;
     var type = param.type, _id = param._id, title = param.title, desc = param.desc, date = param.date, tag = param.tag, branch = param.branch, done = param.done;
@@ -500,7 +646,7 @@ exports.default = function (req) {
 
 
 /***/ }),
-/* 11 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -563,13 +709,13 @@ exports.default = {
 
 
 /***/ }),
-/* 12 */
+/* 14 */
 /***/ (function(module, exports) {
 
 module.exports = require("mongodb");
 
 /***/ }),
-/* 13 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -593,7 +739,7 @@ exports.default = function (req) {
 
 
 /***/ }),
-/* 14 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -644,7 +790,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 var apiDataDB_1 = __webpack_require__(3);
-var apiDataFile_1 = __webpack_require__(15);
+var apiDataFile_1 = __webpack_require__(4);
 exports.default = function (req) { return __awaiter(_this, void 0, void 0, function () {
     var param, type, _id, code, desc, apiId, name, _a, fileName, idSearchResult, code_1, modifyfileName, deletefileName;
     return __generator(this, function (_b) {
@@ -697,112 +843,26 @@ exports.default = function (req) { return __awaiter(_this, void 0, void 0, funct
 
 
 /***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [0, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var fs = __webpack_require__(16);
-var path = __webpack_require__(17);
-var filePath = function (name) { return path.join(__dirname, '/../data/') + name + '.json'; };
-exports.default = {
-    write: function (name, code) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/, new Promise(function (resolve, reject) {
-                        if (!name) {
-                            name = 'p' + new Date().getTime();
-                        }
-                        var savePath = filePath(name);
-                        fs.writeFile(savePath, code, 'utf-8', function (err) {
-                            resolve(name);
-                        });
-                    })];
-            });
-        });
-    },
-    read: function (name) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/, new Promise(function (resolve, reject) {
-                        fs.readFile(filePath(name), 'utf-8', function (err, data) {
-                            resolve(data);
-                        });
-                    })];
-            });
-        });
-    },
-    delete: function (name) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/, new Promise(function (resolve, reject) {
-                        fs.unlink(filePath(name), function (err) {
-                            resolve();
-                        });
-                    })];
-            });
-        });
-    }
-};
-
-
-/***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports) {
 
 module.exports = require("fs");
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports) {
 
 module.exports = require("path");
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 // import { ITApiFetch } from '../src/interface'
-var selectedApiDataDB_1 = __webpack_require__(19);
+var selectedApiDataDB_1 = __webpack_require__(5);
 exports.default = function (req) {
     var param = req.body;
     var apiId = param.apiId, apiDataId = param.apiDataId, type = param.type;
@@ -813,66 +873,6 @@ exports.default = function (req) {
             return selectedApiDataDB_1.default.search({ apiId: apiId });
         case 'modify':
             return selectedApiDataDB_1.default.updata({ apiId: apiId, apiDataId: apiDataId });
-    }
-};
-
-
-/***/ }),
-/* 19 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var dbConfig_1 = __webpack_require__(0);
-// import { ITApiListInfo } from '../src/interface'
-var colName = 'selectedApiData';
-exports.default = {
-    search: function (data) {
-        var apiId = data.apiId, apiDataId = data.apiDataId;
-        return new Promise(function (resolve, reject) {
-            dbConfig_1.MongoClient.connect(dbConfig_1.URL, function (err, db) {
-                var collection = db.collection(colName);
-                var where = {
-                    apiId: apiId
-                };
-                collection.find(where).toArray(function (searchErr, result) {
-                    if (searchErr) {
-                        reject("search error");
-                    }
-                    else {
-                        resolve({ data: result });
-                    }
-                    db.close();
-                });
-            });
-        });
-    },
-    updata: function (data) {
-        var apiId = data.apiId, apiDataId = data.apiDataId;
-        return new Promise(function (resolve, reject) {
-            dbConfig_1.MongoClient.connect(dbConfig_1.URL, function (err, db) {
-                var collection = db.collection(colName);
-                var where = {
-                    apiId: apiId
-                };
-                collection.find(where).toArray(function (searchErr, result) {
-                    if (!result.length) {
-                        collection.insert({ apiId: apiId, apiDataId: apiDataId, time: new Date().getTime() }, function (inerr, docs) {
-                            var _id = docs.ops[0]._id;
-                            resolve({ data: { _id: _id } });
-                            db.close();
-                        });
-                    }
-                    else {
-                        collection.update(where, { $set: { apiId: apiId, apiDataId: apiDataId } }, function (inerr, docs) {
-                            resolve({});
-                            db.close();
-                        });
-                    }
-                });
-            });
-        });
     }
 };
 
@@ -922,8 +922,8 @@ var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 var apiDB_1 = __webpack_require__(2);
 var apiDataDB_1 = __webpack_require__(3);
-var selectedApiDataDB_1 = __webpack_require__(19);
-var apiDataFile_1 = __webpack_require__(15);
+var selectedApiDataDB_1 = __webpack_require__(5);
+var apiDataFile_1 = __webpack_require__(4);
 exports.checkIsProxy = function (path) { return __awaiter(_this, void 0, void 0, function () {
     var result, apiId, apiDataResult, selectedDataResult_1, setlectedApiData_1, readResult;
     return __generator(this, function (_a) {
