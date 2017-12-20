@@ -1,16 +1,35 @@
 import * as React from 'react'
+import { connect } from 'react-redux'
 import { Row, Col } from 'antd'
 import * as echarts from 'echarts'
 
-interface ITProps {}
+import { ITInitialState, ITTodo, ITTodoTagOption } from '../interface'
+
+interface ITProps {
+  todoList: Array<ITTodo>
+  todoTags: Array<ITTodoTagOption>
+}
 
 interface ITState {}
 
 class Chart extends React.Component<ITProps, ITState> {
   componentDidMount () {
-    this.taskfinished()
-    this.taskType()
+    // let taskNumber = this.formatTask(this.props.todoList)
+    // this.taskfinished()
+    // this.taskType()
   }
+
+  componentWillReceiveProps (nextProps: any) {
+    let { todoList, todoTags } = nextProps
+
+    let { completedNumber, actionNumber } = this.formatTask(todoList)
+
+    this.taskfinished({
+      completedNumber,
+      actionNumber
+    })
+  }
+
   public render (): JSX.Element {
     const fullStyle = {
       width: '100%',
@@ -30,10 +49,28 @@ class Chart extends React.Component<ITProps, ITState> {
     )
   }
 
+  formatTask = (data: any) => {
+    let completedNumber: number = 0
+    let actionNumber: number = 0
+    if (data.length) {
+      data.map((item: ITTodo) => {
+        if (item.done) {
+          completedNumber++
+        } else {
+          actionNumber++
+        }
+      })
+    }
+    return {
+      completedNumber,
+      actionNumber
+    }
+  }
+
   /**
    * 已完成，未完成任务
    */
-  taskfinished = () => {
+  taskfinished = ({ completedNumber, actionNumber }: any) => {
     const main: any = document.getElementById('taskFinished')
     let myChart = echarts.init(main)
     myChart.setOption({
@@ -48,7 +85,7 @@ class Chart extends React.Component<ITProps, ITState> {
       },
       series: [
         {
-          name: '访问来源',
+          name: '待办任务',
           type: 'pie',
           radius: ['40%', '60%'],
           avoidLabelOverlap: false,
@@ -70,7 +107,10 @@ class Chart extends React.Component<ITProps, ITState> {
               show: false
             }
           },
-          data: [{ value: 335, name: '已完成' }, { value: 310, name: '未完成' }]
+          data: [
+            { value: completedNumber, name: '已完成' },
+            { value: actionNumber, name: '未完成' }
+          ]
         }
       ]
     })
@@ -123,4 +163,9 @@ class Chart extends React.Component<ITProps, ITState> {
   }
 }
 
-export default Chart
+const mapStateToProps = (state: ITInitialState) => ({
+  todoList: state.todoList,
+  todoTags: state.todoTags
+})
+
+export default connect(mapStateToProps)(Chart)
