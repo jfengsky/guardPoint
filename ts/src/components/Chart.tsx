@@ -13,12 +13,6 @@ interface ITProps {
 interface ITState {}
 
 class Chart extends React.Component<ITProps, ITState> {
-  componentDidMount () {
-    // let taskNumber = this.formatTask(this.props.todoList)
-    // this.taskfinished()
-    // this.taskType()
-  }
-
   componentWillReceiveProps (nextProps: any) {
     let { todoList, todoTags } = nextProps
 
@@ -28,6 +22,10 @@ class Chart extends React.Component<ITProps, ITState> {
       completedNumber,
       actionNumber
     })
+
+    let tagData = this.formatTaskType(todoTags, todoList)
+
+    this.taskType(tagData)
   }
 
   public render (): JSX.Element {
@@ -47,6 +45,34 @@ class Chart extends React.Component<ITProps, ITState> {
         </Row>
       </div>
     )
+  }
+
+  formatTaskType = (
+    todoTags: Array<ITTodoTagOption>,
+    todoList: Array<ITTodo>
+  ): Array<any> => {
+    let tagsList: Array<number> = []
+
+    todoList.map(item => {
+      tagsList.push(...item.tag)
+    })
+
+    let tagsData: Array<any> = []
+    todoTags.map((item: ITTodoTagOption) => {
+      let tagNumber = 0
+      tagsList.map(tagItem => {
+        if (tagItem === item.value) {
+          tagNumber++
+        }
+      })
+
+      tagsData.push({
+        name: item.label,
+        value: tagNumber
+      })
+    })
+
+    return tagsData
   }
 
   formatTask = (data: any) => {
@@ -119,7 +145,7 @@ class Chart extends React.Component<ITProps, ITState> {
   /**
    * 任务类型
    */
-  taskType = () => {
+  taskType = (data: Array<any>) => {
     const taskType: any = document.getElementById('taskType')
     let myChart = echarts.init(taskType)
     myChart.setOption({
@@ -136,7 +162,7 @@ class Chart extends React.Component<ITProps, ITState> {
         {
           name: '任务类型',
           type: 'pie',
-          radius: ['10%', '60%'],
+          radius: ['20%', '60%'],
           avoidLabelOverlap: false,
           label: {
             normal: {
@@ -156,7 +182,7 @@ class Chart extends React.Component<ITProps, ITState> {
               show: false
             }
           },
-          data: [{ value: 335, name: '已完成' }, { value: 310, name: '未完成' }]
+          data
         }
       ]
     })
